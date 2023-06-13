@@ -9,10 +9,6 @@
 
     <title>{{ config('app.name', 'openPIMS') }}</title>
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
     <!-- Styles -->
     <link rel="stylesheet" href="{{ mix('/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ mix('/bootstrap-select.min.css') }}">
@@ -54,7 +50,7 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->user }}
+                                    {{ Auth::user()->email }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

@@ -33,8 +33,8 @@ class HomeController extends Controller
             $category_id = $request->get('category_id');
             Consense::create([
                 'user_id' => Auth::user()->user_id,
-                'host_id' => $host_id? $host_id: 'null',
-                'category_id' => $category_id? $category_id: 'null',
+                'host_id' => $host_id? $host_id: null,
+                'category_id' => $category_id? $category_id: null,
             ]);
         }
 
