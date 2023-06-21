@@ -8,8 +8,25 @@
                 <div class="card border-warning mb-3">
                     <div class="card-header">Your url</div>
                     <div class="card-body text-in">
-                        <input type="text" class="form-control text-bg-warning p-3" value="https://{!! Auth::user()->token !!}.openpims.test" id="myInput">
-                        <!--button class="form-control" onclick="myFunction()">Copy text</button-->
+                        <div class="input-group mb-3">
+                            <input
+                                type="text"
+                                class="form-control text-bg-warning p-3"
+                                aria-describedby="button-addon2"
+                                value="{!! $host !!}"
+                                id="myInput"
+                                disabled
+                            >
+                            <button
+                                class="btn btn-outline-secondary"
+                                data-bs-placement="top"
+                                data-bs-title="Copied to clipboard"
+                                type="button"
+                                id="button-addon2"
+                            >
+                                Copy
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -35,7 +52,7 @@
                                 <tbody>
                                 @foreach($consenses as $consense)
                                     <tr>
-                                        <td>{!! $consense->host?? '*' !!}</td>
+                                        <td>{!! $consense->site?? '*' !!}</td>
                                         <td>{!! $consense->category !!}</td>
                                         <td>
                                             <button type="submit" class="btn btn-light">Withdraw</button>
@@ -44,11 +61,11 @@
                                 @endforeach
 
                                 <td>
-                                    <select name="host_id" class="selectpicker" title="Select Host">
+                                    <select name="site_id" class="selectpicker" title="Select Host">
                                         <option value="0">*</option>
-                                        @foreach($hosts as $host)
-                                            <option value="{!! $host->host_id !!}">
-                                                {!! $host->host !!}
+                                        @foreach($sites as $site)
+                                            <option value="{!! $site->site_id !!}">
+                                                {!! $site->site !!}
                                             </option>
                                         @endforeach
                                     </select>
@@ -77,20 +94,14 @@
             </div>
         </div>
     </div>
-    <script>
-        function myFunction() {
-            // Get the text field
-            var copyText = document.getElementById("myInput");
-
-            // Select the text field
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); // For mobile devices
-
-            // Copy the text inside the text field
-            navigator.clipboard.writeText(copyText.value);
-
-            // Alert the copied text
-            alert("Copied the text: " + copyText.value);
-        }
+    <script type="module">
+        $( document ).ready(function() {
+            $( "#button-addon2" ).on( "click", function() {
+                navigator.clipboard.writeText("{!! $host !!}");
+                $(this).tooltip("show");
+            } );
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        });
     </script>
 @endsection
