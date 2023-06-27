@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Consense;
-use App\Models\Host;
+use App\Models\Consent;
+use App\Models\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,12 +28,11 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('host_id') && $request->has('category_id')) {
-            $host_id = $request->get('host_id');
+        if ($request->has('site_id') && $request->has('category_id')) {
+            $site_id = $request->get('site_id');
             $category_id = $request->get('category_id');
-            Consense::create([
+            Consent::create([
                 'user_id' => Auth::user()->user_id,
-                'host_id' => $host_id? $host_id: null,
                 'category_id' => $category_id? $category_id: null,
             ]);
         }
@@ -42,19 +41,40 @@ class HomeController extends Controller
             SELECT *
             FROM consenses
             JOIN categories USING (category_id)
-            LEFT JOIN hosts USING (host_id)
+            JOIN sites USING (site_id)
             WHERE
                 user_id IS NULL
                 OR user_id=%d
-            ORDER BY user_id, host_id, category_id
+            ORDER BY user_id, site_id, category_id
         ",
             Auth::user()->user_id
         );
+        $consenses = DB::select($sql);
+
+        $sql = sprintf("
+            SELECT DISTINCT site_id, site
+            FROM visits
+            JOIN sites USING (site_id)
+            WHERE user_id=%d
+            ORDER BY site
+        ",
+            Auth::user()->user_id
+        );
+        $sites = DB::select($sql);
+
+        $host = str_replace([
+            'http://',
+            'https://'
+        ], [
+            'http://'.Auth::user()->token.'.',
+            'https://'.Auth::user()->token.'.'
+        ], env('APP_URL'));
 
         return view('home', [
-            'consenses' => DB::select($sql),
+            'consenses' => $consenses,
             'categories' => Category::where('category_id', '!=', 1)->get(),
-            'hosts' => Host::all(),
+            'sites' => $sites,
+            'host' => $host
         ]);
     }
 }

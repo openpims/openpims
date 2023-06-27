@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::dropIfExists('categories');
         Schema::create('categories', function (Blueprint $table) {
             $table->integerIncrements('category_id');
-            $table->string('category')->unique();
+            $table->string('category');
+            $table->smallInteger('site_id')->unsigned();
+            $table->unique(['category', 'site_id'], 'unique');
             $table->timestamps();
         });
     }

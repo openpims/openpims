@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('relations');
-        Schema::create('relations', function (Blueprint $table) {
-            $table->integerIncrements('relation_id');
-            $table->integer('host_id')->unsigned();
-            $table->integer('category_id')->unsigned();
-            $table->unique(['host_id', 'category_id'], 'unique');
+        Schema::dropIfExists('sites');
+        Schema::create('sites', function (Blueprint $table) {
+            $table->integerIncrements('site_id');
+            $table->string('site', 64)->unique();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('relations');
+        Schema::dropIfExists('sites');
     }
 };

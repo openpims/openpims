@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('hosts');
-        Schema::create('hosts', function (Blueprint $table) {
-            $table->integerIncrements('host_id');
-            $table->string('host')->unique();
+        Schema::dropIfExists('consents');
+        Schema::create('consents', function (Blueprint $table) {
+            $table->integerIncrements('consent_id');
+            $table->integer('user_id')->unsigned();
+            $table->integer('category_id')->unsigned();
+            $table->unique(['user_id', 'category_id'], 'unique');
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hosts');
+        Schema::dropIfExists('consents');
     }
 };

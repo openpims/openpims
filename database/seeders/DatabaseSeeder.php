@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Account;
 use App\Models\Category;
-use App\Models\Consense;
+use App\Models\Consent;
+use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,29 +18,38 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        Account::create([
+            'account' => 'portalix',
+        ]);
         User::create([
             //'user' => 'portalix',
+            'account_id' => 1,
             'email' => 'portalix@gmail.com',
             'password' => Hash::make('gehheim'),
         ]);
-
-        User::create([
-            //'user' => 'portalix2',
-            'email' => 'portalix2@gmail.com',
-            'password' => Hash::make('gehheim'),
+        Site::create([
+            'site' => 'trustee.eu',
+            //'account_id' => 1,
         ]);
-
-        Category::create(['category' => 'necessary']);
-        Category::create(['category' => 'functional']);
-        Category::create(['category' => 'statistics']);
-        Category::create(['category' => 'marketing']);
-
-        Consense::create([
-            'category_id' => 1,
+        Category::create([
+            'category' => 'necessary',
+            'site_id' => 1,
         ]);
-        Consense::create([
-            'user_id' => 2,
-            'category_id' => 2,
+        Category::create([
+            'category' => 'functional',
+            'site_id' => 1,
         ]);
+        Category::create([
+            'category' => 'statistics',
+            'site_id' => 1,
+        ]);
+        Category::create([
+            'category' => 'marketing',
+            'site_id' => 1,
+        ]);
+        //Consense::create([
+        //    'user_id' => 1,
+        //    'category_id' => 1,
+        //]);
     }
 }

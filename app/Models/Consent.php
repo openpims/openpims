@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Consense extends Model
+class Consent extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'consense_id';
+    protected $primaryKey = 'consent_id';
     protected $fillable = [
         'user_id',
-        'host_id',
         'category_id',
     ];
 }

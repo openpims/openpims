@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Account extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'category_id';
+    protected $primaryKey = 'account_id';
     protected $fillable = [
-        'category',
-        'site_id',
+        'account',
     ];
 }
