@@ -18,5 +18,8 @@ mix
     //.copy('node_modules/popper.js/dist/umd/popper.min.js', 'public/popper.min.js')
     //.copy('node_modules/popper.js/dist/umd/popper.min.js.map', 'public/popper.min.js.map')
 
+    .copy('node_modules/bootstrap-icons/font/bootstrap-icons.css', 'public/bootstrap-icons.css')
+    .copyDirectory('node_modules/bootstrap-icons/font/fonts', 'public/fonts')
+
     .version()
 ;

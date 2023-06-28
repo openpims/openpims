@@ -11,6 +11,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ mix('/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ mix('/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ mix('/bootstrap-select.min.css') }}">
 
 </head>
@@ -18,7 +19,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="{{ url('/home') }}">
                     <img src="/cookie.png" width="32" height="32" class="d-inline-block align-top" alt="">
                     {{ config('app.name', 'openPIMS') }}
                 </a>
@@ -48,6 +49,14 @@
                                 </li>
                             @endif
                         @else
+
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/home">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/export">Export</a>
+                            </li>
+
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->email }}

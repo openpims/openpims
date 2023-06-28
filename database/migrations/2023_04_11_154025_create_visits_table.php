@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('visits', function (Blueprint $table) {
             $table->integerIncrements('visit_id');
             $table->integer('user_id')->unsigned();
-            $table->integer('site_id')->unsigned();
+            $table->integer('site_id')->unsigned()->unique();
             $table->timestamps();
         });
     }

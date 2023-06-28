@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Site;
 use App\Models\User;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -75,12 +76,17 @@ class ApiController extends Controller
                     $user_id,
                     $site_id,
                 );
-                DB::insert($sql);
+                //DB::insert($sql);
+
+                Visit::updateOrCreate(
+                    ['site_id' =>  $site_id],
+                    ['user_id' => $user_id, 'updated_at' => now()]
+                );
             }
 
             $sql = sprintf("
                 SELECT category
-                FROM consenses
+                FROM consents
                 JOIN categories USING (category_id)
                 WHERE user_id=%d
                 ORDER BY user_id

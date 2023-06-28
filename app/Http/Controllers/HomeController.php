@@ -39,7 +39,7 @@ class HomeController extends Controller
 
         $sql = sprintf("
             SELECT *
-            FROM consenses
+            FROM consents
             JOIN categories USING (category_id)
             JOIN sites USING (site_id)
             WHERE
@@ -49,18 +49,19 @@ class HomeController extends Controller
         ",
             Auth::user()->user_id
         );
-        $consenses = DB::select($sql);
+        $consents = DB::select($sql);
 
         $sql = sprintf("
-            SELECT DISTINCT site_id, site
+            SELECT site_id, site
             FROM visits
             JOIN sites USING (site_id)
             WHERE user_id=%d
-            ORDER BY site
+            ORDER BY visits.updated_at DESC
         ",
             Auth::user()->user_id
         );
         $sites = DB::select($sql);
+
 
         $host = str_replace([
             'http://',
@@ -71,10 +72,48 @@ class HomeController extends Controller
         ], env('APP_URL'));
 
         return view('home', [
-            'consenses' => $consenses,
+            'consenses' => $consents,
             'categories' => Category::where('category_id', '!=', 1)->get(),
             'sites' => $sites,
             'host' => $host
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        $fileName = 'openpims.csv';
+
+        $sql = "SELECT site, category
+            FROM consents
+            JOIN categories USING (category_id)
+            JOIN sites USING (site_id)
+        ";
+        $consents = DB::select($sql);
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $columns = array('Site', 'Category');
+
+        $callback = function() use ($consents, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($consents as $consent) {
+                $row['Site']  = $consent->site;
+                $row['Category']    = $consent->category;
+
+                fputcsv($file, array($row['Site'], $row['Category']));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

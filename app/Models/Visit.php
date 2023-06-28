@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Site extends Model
+class Visit extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'site_id';
+    protected $primaryKey = 'visit_id';
     protected $fillable = [
-        'site',
+        'user_id',
+        'site_id',
+        'updated_at',
     ];
 }
