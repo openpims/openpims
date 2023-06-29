@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="{{ mix('/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ mix('/bootstrap-select.min.css') }}">
 
+    <link rel="icon" href="/favicon.png" type="image/png">
+
 </head>
 <body>
     <div id="app">
@@ -51,10 +53,10 @@
                         @else
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="/home">Home</a>
+                                <a class="nav-link" href="/home">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="/export">Export</a>
+                                <a class="nav-link" href="/export">Export</a>
                             </li>
 
                             <li class="nav-item dropdown">

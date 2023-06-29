@@ -72,7 +72,6 @@ class HomeController extends Controller
         ], env('APP_URL'));
 
         return view('home', [
-            'consenses' => $consents,
             'categories' => Category::where('category_id', '!=', 1)->get(),
             'sites' => $sites,
             'host' => $host
@@ -115,5 +114,39 @@ class HomeController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function category(int $site_id)
+    {
+        $categories = Category::where('site_id', $site_id)->get(['category_id', 'category']);
+        foreach ($categories AS $id => $category) {
+
+            $consent = Consent::where('user_id', Auth::user()->user_id)
+                ->where('category_id', $category->category_id)
+                ->first();
+            if ($consent instanceof Consent) {
+                $categories[$id]->checked = 'checked';
+            } else {
+                $categories[$id]->checked = '';
+            }
+
+        }
+
+        return $categories;
+    }
+
+    public function consent(int $category_id)
+    {
+        $consent = Consent::where('user_id', Auth::user()->user_id)
+            ->where('category_id', $category_id)
+            ->first();
+        if ($consent instanceof Consent) {
+            $consent->delete();
+        } else {
+            Consent::create([
+                'user_id' => Auth::user()->user_id,
+                'category_id' => $category_id,
+            ]);
+        }
     }
 }

@@ -3,49 +3,62 @@
 @section('content')
     <div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form id="editForm" method="post">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Edit Sites</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="site-text" class="col-form-label">Site</label>
-                            <input id="cross" name="cross" class="form-control" required>
-                        </div>
-                        <input name="_method" type="hidden" value="PUT">
+                        <!--div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Accordion Item #1
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Accordion Item #2
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        Accordion Item #3
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                                    </div>
+                                </div>
+                            </div>
+                        </div-->
                         <div class="row">
-                            <div class="col-sm-12 col-lg-6">
-                                <div id="type-group" class="form-group">
-                                    <div class="form-group">
-                                        <label for="source-text" class="col-form-label">Source</label>
-                                        <select id="source" name="source" class="form-control selectpicker" disabled>
-                                        </select>
-                                    </div>
-                                </div>
-                                Fields<br>
-                                <div id="editFields"></div>
-                            </div>
-                            <div class="col-sm-12 col-lg-6">
-                                <div id="type-group" class="form-group">
-                                    <div class="form-group">
-                                        <label for="target-text" class="col-form-label">Target</label>
-                                        <select id="target" name="target" class="form-control selectpicker" disabled>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div id="editFields2"></div>
-                            </div>
+                            <div class="col-sm-12 col-lg-6" id="categories"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Cross</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <!--button type="submit" class="btn btn-primary">Save Cross</button-->
                     </div>
                 </form>
             </div>
@@ -137,8 +150,6 @@
                                 </tbody>
                             </table>
                         </form>
-
-
                     </div>
                 </div>
             </div>
@@ -156,63 +167,29 @@
 
         $(".editClick").click(function () {
             let id = $(this).attr('id');
-            console.log('edit: ' + id);
-            $("#editForm").attr('action', '/cross/' + id);
-            $.getJSON("/cross/" + id + "/edit", function (cross) {
-                console.log(cross);
-
-                $('#cross').val(cross.cross);
-
-                $.getJSON("/connect/" + cross.source_connect_id + "/edit", function (source) {
-                    //console.log(source);
-
-                    let sel = $("#source");
-                    sel.empty();
-                    sel.append('<option selected>' + source.connect + '</option>');
-                    sel.selectpicker('destroy');
-                    sel.selectpicker();
-
-                    $.getJSON("/module/" + source.module_id + "/fields", function (field) {
-                        //console.log(field);
-                        var sel = $("#editFields");
-                        sel.empty();
-                        for (var i = 0; i < field.length; i++) {
-                            sel.append(
-                                '<li>' + field[i].field + '</li>'
-                            );
-                        }
-                    });
-
-                    $.getJSON("/connect/" + cross.target_connect_id + "/edit", function (target) {
-                        console.log('target: '.target);
-
-                        let sel = $("#target");
-                        sel.empty();
-                        sel.append('<option selected>' + target.connect + '</option>');
-                        sel.selectpicker('destroy');
-                        sel.selectpicker();
-
-                        $.getJSON("/cross/" + cross.cross_id + "/transforms/", function (transform) {
-                            console.log(transform);
-                            var sel = $("#editFields2");
-                            sel.empty();
-                            for (var i = 0; i < transform.length; i++) {
-                                if (transform[i].textarea==1) {
-                                    sel.append(
-                                        transform[i].field + '<textarea rows="4" name="transforms[' + transform[i].transform_id + ']" class="form-control">' + transform[i].transform + '</textarea>'
-                                    );
-                                } else {
-                                    console.log(2);
-                                    sel.append(
-                                        transform[i].field + '<input type="text" name="transforms[' + transform[i].transform_id + ']" value="' + transform[i].transform + '" class="form-control">'
-                                    );
-                                }
-                            }
-                        });
-                    });
-                });
+            //console.log('edit: ' + id);
+            $.getJSON("/category/" + id , function (category) {
+                //console.log(category);
+                var sel = $("#categories");
+                sel.empty();
+                for (var i = 0; i < category.length; i++) {
+                    sel.append(
+                        '<div class="form-check form-switch">' +
+                        '<input class="form-check-input" type="checkbox" role="switch" value="' + category[i].category_id + '" id="flexSwitchCheckDefault' + category[i].category_id +'" ' + category[i].checked + '>' +
+                        '<label class="form-check-label" for="flexSwitchCheckDefault' + category[i].category_id +'">' + category[i].category + '</label>' +
+                        '</div>'
+                    );
+                }
             });
             $('#editModal').modal('show');
+        });
+
+        $(document).on("click", ".form-check-input" , function() {
+            var category_id = $(this).val();
+            //console.log(category_id);
+            $.getJSON("/consent/" + category_id , function (category) {
+
+            });
         });
 
     </script>

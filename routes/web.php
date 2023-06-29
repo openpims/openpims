@@ -24,6 +24,8 @@ Route::group([
     Auth::routes(['register' => true, 'verify' => true]);
     Route::resource('site', 'App\Http\Controllers\SiteController')->middleware(['auth', 'verified']);
     Route::get('/export', [App\Http\Controllers\HomeController::class, 'export'])->name('export')->middleware(['auth', 'verified']);
+    Route::get('/category/{site_id}', [App\Http\Controllers\HomeController::class, 'category'])->name('category')->middleware(['auth', 'verified']);
+    Route::get('/consent/{category_id}', [App\Http\Controllers\HomeController::class, 'consent'])->name('category')->middleware(['auth', 'verified']);
 });
 
 
@@ -32,11 +34,3 @@ Route::group([
 ], function () {
     Route::resource('/{site?}', 'App\Http\Controllers\ApiController');
 });
-
-Auth::routes(['register' => false, 'verify' => true]);
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
