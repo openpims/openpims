@@ -49,7 +49,7 @@ class HomeController extends Controller
         ",
             Auth::user()->user_id
         );
-        $consents = DB::select($sql);
+        //$consents = DB::select($sql);
 
         $sql = sprintf("
             SELECT site_id, site
