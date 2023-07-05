@@ -25,12 +25,14 @@ Route::group([
     Route::resource('site', 'App\Http\Controllers\SiteController')->middleware(['auth', 'verified']);
     Route::get('/export', [App\Http\Controllers\HomeController::class, 'export'])->name('export')->middleware(['auth', 'verified']);
     Route::get('/category/{site_id}', [App\Http\Controllers\HomeController::class, 'category'])->name('category')->middleware(['auth', 'verified']);
-    Route::get('/consent/{category_id}', [App\Http\Controllers\HomeController::class, 'consent'])->name('category')->middleware(['auth', 'verified']);
+    Route::get('/standard', [App\Http\Controllers\HomeController::class, 'standard'])->name('standard')->middleware(['auth', 'verified']);
+    Route::get('/consent/{standard}/{category_id}', [App\Http\Controllers\HomeController::class, 'consent'])->name('category')->middleware(['auth', 'verified']);
 });
 
 
 Route::group([
     'domain' => App::environment('local') ? '{token}.openpims.test' : '{token}.openpims.de'
 ], function () {
-    Route::resource('/{site?}', 'App\Http\Controllers\ApiController');
+    //Route::resource('/{site?}', 'App\Http\Controllers\ApiController');
+    Route::resource('/', 'App\Http\Controllers\ApiController');
 });

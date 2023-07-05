@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Console\Supplier;
 use App\Models\Category;
 use App\Models\Consent;
-use App\Models\Site;
+use App\Models\Standard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -72,7 +74,6 @@ class HomeController extends Controller
         ], env('APP_URL'));
 
         return view('home', [
-            'categories' => Category::where('category_id', '!=', 1)->get(),
             'sites' => $sites,
             'host' => $host
         ]);
@@ -116,37 +117,66 @@ class HomeController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function category(int $site_id)
+    public function standard()
     {
-        $categories = Category::where('site_id', $site_id)->get(['category_id', 'category']);
+        $sql = sprintf("SELECT
+                standard_id AS category_id,
+                standard AS category,
+                IF(checked, 'checked', '') AS checked,
+                IF(disabled, 'disabled', '') AS disabled
+            FROM standards
+            WHERE user_id = %d
+            ORDER BY standard_id
+        ", Auth::user()->user_id);
+        $categories = DB::select($sql);
         foreach ($categories AS $id => $category) {
-
-            $consent = Consent::where('user_id', Auth::user()->user_id)
-                ->where('category_id', $category->category_id)
-                ->first();
-            if ($consent instanceof Consent) {
-                $categories[$id]->checked = 'checked';
-            } else {
-                $categories[$id]->checked = '';
-            }
-
+            $categories[$id]->suppliers = [];
         }
 
         return $categories;
     }
 
-    public function consent(int $category_id)
+    public function category(int $site_id)
     {
-        $consent = Consent::where('user_id', Auth::user()->user_id)
-            ->where('category_id', $category_id)
-            ->first();
-        if ($consent instanceof Consent) {
-            $consent->delete();
-        } else {
-            Consent::create([
-                'user_id' => Auth::user()->user_id,
-                'category_id' => $category_id,
-            ]);
+        $sql = sprintf("SELECT
+                category_id,
+                category,
+                IF(COALESCE(consents.checked, standards.checked, 0), 'checked', '') AS checked,
+                IF(COALESCE(disabled, 0), 'disabled', '') AS disabled
+            FROM consents
+            JOIN categories USING (category_id)
+            LEFT JOIN standards USING (standard_id)
+            WHERE consents.user_id = %d
+            AND site_id = %d
+            ORDER BY standard_id DESC
+        ",
+            Auth::user()->user_id,
+            $site_id
+        );
+        $categories = DB::select($sql);
+
+        foreach ($categories AS $id => $category) {
+            $categories[$id]->suppliers = Supplier::where('category_id', $category->category_id)->get(['supplier', 'supplier_id']);
         }
+
+        return $categories;
+    }
+
+    public function consent(bool $standard_bool, int $category_id)
+    {
+        if ($standard_bool) {
+            $standard = Standard::find($category_id);
+            $standard->checked = $standard->checked? 0: 1;
+            $standard->save();
+        } else {
+            $consent = Consent::where('user_id', Auth::user()->user_id)
+                ->where('category_id', $category_id)
+                ->first();
+            if ($consent instanceof Consent) {
+                $consent->checked = $consent->checked? 0: 1;
+                $consent->save();
+            }
+        }
+
     }
 }

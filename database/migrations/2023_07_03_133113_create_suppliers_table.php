@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('sites');
-        Schema::create('sites', function (Blueprint $table) {
-            $table->integerIncrements('site_id');
-            $table->string('site', 64);
-            $table->string('url');
-            $table->unique(['site', 'url'], 'unique');
-            $table->boolean('not_loaded')->default(1);
+        Schema::dropIfExists('suppliers');
+        Schema::create('suppliers', function (Blueprint $table) {
+            $table->integerIncrements('supplier_id');
+            $table->string('supplier');
+            $table->integer('category_id')->unsigned()->index();
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sites');
+        Schema::dropIfExists('suppliers');
     }
 };

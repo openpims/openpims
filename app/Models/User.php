@@ -6,6 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -53,6 +55,16 @@ class User extends Authenticatable implements MustVerifyEmail
         {
             $user->token = Str::lower(Str::random(8));
             $user->save();
+
+            $standards = Standard::where('user_id', null)->get();
+            foreach ($standards as $standard) {
+                Standard::create([
+                    'standard' => $standard->standard,
+                    'checked' => $standard->checked,
+                    'disabled' => $standard->disabled,
+                    'user_id' => $user->user_id,
+                ]);
+            }
         });
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace App\Console;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Site extends Model
+class Supplier extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'site_id';
+    protected $primaryKey = 'supplier_id';
     protected $fillable = [
-        'site',
-        'url',
+        'supplier',
+        'category_id',
     ];
 }

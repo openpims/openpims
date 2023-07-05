@@ -8,53 +8,11 @@
                 <form id="editForm" method="post">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Edit Sites</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <h5 class="modal-title" id="site"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!--div class="accordion" id="accordionExample">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Accordion Item #1
-                                    </button>
-                                </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingTwo">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Accordion Item #2
-                                    </button>
-                                </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        Accordion Item #3
-                                    </button>
-                                </h2>
-                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                    </div>
-                                </div>
-                            </div>
-                        </div-->
-                        <div class="row">
-                            <div class="col-sm-12 col-lg-6" id="categories"></div>
-                        </div>
+                        <div class="accordion" id="accordionExample"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -94,6 +52,23 @@
                     </div>
                 </div>
 
+                <div class="card border-warning mb-3">
+                    <div class="card-header">Your consenses</div>
+                    <div class="card-body text-in">
+
+                        <a class="editClick" id="0" data-site="Default Consense">
+                            <button
+                                class="btn btn-outline-primary"
+                                type="button"
+                                id="editDefaultConsense"
+                            >
+                                Edit Default Consense
+                            </button>
+                        </a>
+
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="card-header">{{ __('Visited Sites') }}</div>
 
@@ -118,35 +93,12 @@
                                         <td>{!! $site->site !!}</td>
                                         <td>
                                             <!--button type="submit" class="btn btn-light">Withdraw</button-->
-                                            <a class="editClick" id="{!! $site->site_id !!}"><i class="bi-pencil-square"></i></a>
+                                            <a class="editClick" id="{!! $site->site_id !!}" data-site="{!! $site->site !!}">
+                                                <i class="bi-pencil-square"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
-
-                                <!--td>
-                                    <select name="site_id" class="selectpicker" title="Select Host">
-                                        <option value="0">*</option>
-                                        @foreach($sites as $site)
-                                            <option value="{!! $site->site_id !!}">
-                                                {!! $site->site !!}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="category_id" class="selectpicker" title="Select Category">
-                                        <option value="0">*</option>
-                                        @foreach($categories as $category)
-                                            <option value="{!! $category->category_id !!}">
-                                                {!! $category->category !!}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-primary">Consense</button>
-                                </td-->
                                 </tbody>
                             </table>
                         </form>
@@ -165,18 +117,53 @@
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         });
 
+
+
         $(".editClick").click(function () {
-            let id = $(this).attr('id');
-            //console.log('edit: ' + id);
-            $.getJSON("/category/" + id , function (category) {
-                //console.log(category);
-                var sel = $("#categories");
+            let site_id = $(this).attr('id');
+            let site = $(this).data('site');
+            console.log('edit: ' + site_id);
+            $("#site").html(site);
+            var url = site_id==0? '/standard/' : '/category/' + site_id;
+            var standard = site_id==0;
+
+            console.log(url);
+
+            $.getJSON(url , function (category) {
+                console.log(category);
+                var sel = $("#accordionExample");
                 sel.empty();
                 for (var i = 0; i < category.length; i++) {
+
+                    var show = i? '': 'show';
+                    var collapsed = i? 'collapsed': '';
+
+                    var suppliers = category[i].suppliers;
+
+                    var sup = '';
+                    for (var j = 0; j < suppliers.length; j++) {
+                        sup = sup +
+                            '<div class="form-check form-switch">' +
+                            '<small><input class="form-check-input" type="checkbox" role="switch" value="' + suppliers[j].supplier_id + '" id="flexSwitchCheckDefault' + category[i].category_id +'"></small>' +
+                            '<label class="form-check-label" for="flexSwitchCheckDefault' + suppliers[j].supplier_id +'"><small>' + suppliers[j].supplier + '</small></label>' +
+                            '</div>';
+                    }
+
                     sel.append(
-                        '<div class="form-check form-switch">' +
-                        '<input class="form-check-input" type="checkbox" role="switch" value="' + category[i].category_id + '" id="flexSwitchCheckDefault' + category[i].category_id +'" ' + category[i].checked + '>' +
-                        '<label class="form-check-label" for="flexSwitchCheckDefault' + category[i].category_id +'">' + category[i].category + '</label>' +
+                        '<div class="accordion-item">' +
+                            '<h2 class="accordion-header" id="heading' + category[i].category_id + '">' +
+                                '<button class="accordion-button ' + collapsed + '" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' + category[i].category_id + '" aria-expanded="" aria-controls="collapse' + category[i].category_id + '">' +
+                                    '<div class="form-check form-switch">' +
+                                        '<input data-standard="' + standard + '" class="form-check-input" type="checkbox" role="switch" value="' + category[i].category_id + '" id="flexSwitchCheckDefault' + category[i].category_id +'" ' + category[i].checked + ' ' + category[i].disabled + '>' +
+                                        '<label class="form-check-label" for="flexSwitchCheckDefault' + category[i].category_id +'">' + category[i].category + '</label>' +
+                                    '</div>' +
+                                '</button>' +
+                            '</h2>' +
+                            '<div id="collapse' + category[i].category_id + '" class="accordion-collapse collapse ' + show + '" aria-labelledby="heading' + category[i].category_id + '" data-bs-parent="#accordionExample">' +
+                                '<div class="accordion-body">' +
+                                    sup +
+                                '</div>' +
+                            '</div>' +
                         '</div>'
                     );
                 }
@@ -186,8 +173,9 @@
 
         $(document).on("click", ".form-check-input" , function() {
             var category_id = $(this).val();
-            //console.log(category_id);
-            $.getJSON("/consent/" + category_id , function (category) {
+            var standard = $(this).data('standard')? 1: 0;
+            console.log(standard);
+            $.getJSON("/consent/" + standard + "/" + category_id , function (category) {
 
             });
         });

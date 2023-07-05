@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('category_id')->unsigned();
             $table->unique(['user_id', 'category_id'], 'unique');
+            $table->boolean('checked')->nullable()->default(null);
             $table->timestamps();
         });
     }

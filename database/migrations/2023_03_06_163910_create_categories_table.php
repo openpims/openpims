@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('category');
             $table->smallInteger('site_id')->unsigned();
             $table->unique(['category', 'site_id'], 'unique');
+            $table->tinyInteger('standard_id')->unsigned()->nullable()->default(null);
             $table->timestamps();
         });
     }
