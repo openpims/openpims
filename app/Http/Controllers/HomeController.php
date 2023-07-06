@@ -177,7 +177,9 @@ class HomeController extends Controller
         $categories = DB::select($sql);
 
         foreach ($categories AS $id => $category) {
-            $categories[$id]->suppliers = Supplier::where('category_id', $category->category_id)->get(['supplier', 'supplier_id']);
+            $suppliers = Supplier::where('category_id', $category->category_id)->get(['supplier', 'supplier_id']);
+            $categories[$id]->suppliers = $suppliers;
+            $categories[$id]->amount = count($suppliers);
         }
 
         return $categories;

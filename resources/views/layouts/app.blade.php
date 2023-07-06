@@ -55,8 +55,13 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="/home">Home</a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" href="/export">Export</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="/home?onboarding=1">Setup</a>
                             </li>
 
                             <li class="nav-item dropdown">

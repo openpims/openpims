@@ -5,7 +5,7 @@
     <div id="onboarding" class="modal fade" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form id="editForm" method="post">
+                <form id="editForm" method="post" action="/home">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="title">
@@ -19,7 +19,7 @@
                             Um starten
                         </p>
                         <div class="card border-warning mb-3">
-                            <div class="card-header"><strong>1.</strong> Bitte installiere die entsprechende Browser-Erweiterung für dich.</div>
+                            <div class="card-header"><font size="18px">1.</font> Installiere die entsprechende Browser-Erweiterung für dich.</div>
                             <div class="card-body text-in">
                                 <div class="container text-center">
                                     <div class="row">
@@ -39,19 +39,19 @@
                             </div>
                         </div>
                         <div class="card border-warning mb-3">
-                            <div class="card-header"><strong>2.</strong> Bitte kopiere deine persönliche URL und füge sie in das Browser-Plugin ein.</div>
+                            <div class="card-header"><font size="18px">2.</font> Kopiere deine persönliche URL und füge sie in das Browser-Plugin ein.</div>
                             <div class="card-body text-in">
                                 <div class="input-group mb-3">
                                     <input
                                         type="text"
-                                        class="form-control text-bg-warning p-3"
+                                        class="form-control text-bg-light"
                                         aria-describedby="button-addon2"
                                         value="{!! $host !!}"
                                         id="myInput"
                                         disabled
                                     >
                                     <button
-                                        class="btn btn-outline-secondary"
+                                        class="btn btn-outline-primary"
                                         data-bs-placement="top"
                                         data-bs-title="Copied to clipboard"
                                         type="button"
@@ -60,30 +60,17 @@
                                         Kopiere
                                     </button>
                                 </div>
-                                <center><img src="/insert.png" height="200" border="1"></center>
+                                <center><img src="/insert.png" height="150" border="1"></center>
                             </div>
                         </div>
                         <div class="card border-warning mb-3">
-                            <div class="card-header"><strong>3.</strong> Bitte wähle die Kategorien aus, für die du Cookies in deinem Browser zulassen möchtest.</div>
+                            <div class="card-header"><font size="18px">3.</font> Wähle die Kategorien aus, für die du Cookies in deinem Browser zulassen möchtest.</div>
                             <div class="card-body">
                                 <div class="mb-3">
                                     @foreach($categories as $category)
-                                        <div class="row">
-                                            <div class="col">
-                                                <input
-                                                    data-standard="1"
-                                                    class="form-check-input"
-                                                    type="checkbox"
-                                                    role="switch"
-                                                    value="{!! $category->category_id !!}"
-                                                    id="flexSwitchCheckDefault{!! $category->category_id !!}"
-                                                    {!! $category->checked !!}
-                                                    {!! $category->disabled !!}
-                                                >
-                                                <label class="form-check-label" for="flexSwitchCheckDefault{!! $category->category_id !!}">
-                                                    {!! $category->category !!}
-                                                </label>
-                                            </div>
+                                        <div class="form-check form-switch">
+                                            <input data-standard="1" class="form-check-input" type="checkbox" id="f{!! $category->category_id !!}" value="{!! $category->category_id !!}" {!! $category->checked !!} {!! $category->disabled !!}>
+                                            <label class="form-check-label" for="f{!! $category->category_id !!}">{!! $category->category !!}</label>
                                         </div>
                                     @endforeach
                                 </div>
@@ -168,38 +155,35 @@
                 </div-->
 
                 <div class="card">
-                    <div class="card-header">{{ __('Visited Sites') }}</div>
-
+                    <div class="card-header">{{ __("Hier werden alle von dir besuchten Seiten angezeigt, die von OpenPIMS verwaltet werden.") }}</div>
                     <div class="card-body">
-                        @if (session('status'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
-                            </div>
-                        @endif
-
-                        <form method="get">
-                            <table class="table table-striped">
-                                <thead>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Site</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($sites as $site)
                                 <tr>
-                                    <th>Site</th>
-                                    <th>Action</th>
+                                    <td>
+                                        {!! $site->site !!}
+                                    </td>
+                                    <td class="text-end">
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-secondary editClick"
+                                            id="{!! $site->site_id !!}"
+                                            data-site="{!! $site->site !!}"
+                                        >
+                                            Bearbeiten
+                                        </button>
+                                    </td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($sites as $site)
-                                    <tr>
-                                        <td>{!! $site->site !!}</td>
-                                        <td>
-                                            <!--button type="submit" class="btn btn-light">Withdraw</button-->
-                                            <a class="editClick" id="{!! $site->site_id !!}" data-site="{!! $site->site !!}">
-                                                <i class="bi-pencil-square"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </form>
+                            @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -258,7 +242,7 @@
                                 '<button class="accordion-button ' + collapsed + '" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' + category[i].category_id + '" aria-expanded="" aria-controls="collapse' + category[i].category_id + '">' +
                                     '<div class="form-check form-switch">' +
                                         '<input data-standard="' + standard + '" class="form-check-input" type="checkbox" role="switch" value="' + category[i].category_id + '" id="flexSwitchCheckDefault' + category[i].category_id +'" ' + category[i].checked + ' ' + category[i].disabled + '>' +
-                                        '<label class="form-check-label" for="flexSwitchCheckDefault' + category[i].category_id +'">' + category[i].category + '</label>' +
+                                        '<label class="form-check-label" for="flexSwitchCheckDefault' + category[i].category_id +'">' + category[i].category + ' (' + category[i].amount + ' Anbieter) ' +  '</label>' +
                                     '</div>' +
                                 '</button>' +
                             '</h2>' +
