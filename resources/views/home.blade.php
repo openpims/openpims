@@ -9,7 +9,7 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="title">
-                            <img src="/cookie.png" width="32" height="32" class="d-inline-block align-top" alt="openPIMS">
+                            <img src="/openpims.png" width="32" height="32" class="d-inline-block align-top" alt="openPIMS">
                             {{ config('app.name', 'openPIMS') }}
                         </h5>
                     </div>
