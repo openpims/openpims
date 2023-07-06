@@ -1,0 +1,18 @@
+{
+  "bugs": "https://github.com/alrra/browser-logos/issues",
+  "description": "Opera browser logo",
+  "homepage": "https://github.com/alrra/browser-logos",
+  "keywords": [
+    "browser-logos",
+    "logo",
+    "opera",
+    "opera-logo"
+  ],
+  "name": "@browser-logos/opera",
+  "repository": {
+    "directory": "src/opera",
+    "type": "git",
+    "url": "https://github.com/alrra/browser-logos.git"
+  },
+  "version": "1.1.11"
+}

@@ -30,6 +30,12 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->has('onboarding')) {
+            Auth::user()->update([
+                'onboarding' => $request->get('onboarding')
+            ]);
+        }
+
         if ($request->has('site_id') && $request->has('category_id')) {
             $site_id = $request->get('site_id');
             $category_id = $request->get('category_id');
@@ -64,7 +70,6 @@ class HomeController extends Controller
         );
         $sites = DB::select($sql);
 
-
         $host = str_replace([
             'http://',
             'https://'
@@ -73,9 +78,25 @@ class HomeController extends Controller
             'https://'.Auth::user()->token.'.'
         ], env('APP_URL'));
 
+        $sql = sprintf("SELECT
+                standard_id AS category_id,
+                standard AS category,
+                IF(checked, 'checked', '') AS checked,
+                IF(disabled, 'disabled', '') AS disabled
+            FROM standards
+            WHERE user_id = %d
+            ORDER BY standard_id
+        ", Auth::user()->user_id);
+        $categories = DB::select($sql);
+        foreach ($categories AS $id => $category) {
+            $categories[$id]->suppliers = [];
+        }
+
         return view('home', [
+            'user' => Auth::user(),
             'sites' => $sites,
-            'host' => $host
+            'host' => $host,
+            'categories' => $categories,
         ]);
     }
 

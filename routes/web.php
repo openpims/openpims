@@ -21,6 +21,7 @@ Route::group([
         return view('welcome');
     });
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
+    Route::post('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
     Auth::routes(['register' => true, 'verify' => true]);
     Route::resource('site', 'App\Http\Controllers\SiteController')->middleware(['auth', 'verified']);
     Route::get('/export', [App\Http\Controllers\HomeController::class, 'export'])->name('export')->middleware(['auth', 'verified']);

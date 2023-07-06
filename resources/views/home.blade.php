@@ -1,6 +1,104 @@
 @extends('layouts.app')
 
 @section('content')
+
+    <div id="onboarding" class="modal fade" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form id="editForm" method="post">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="title">
+                            <img src="/cookie.png" width="32" height="32" class="d-inline-block align-top" alt="openPIMS">
+                            {{ config('app.name', 'openPIMS') }}
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Herzlich willkommen bei deinem <strong>P</strong>ersönlichen <strong>I</strong>nformations <strong>M</strong>anagement <strong>S</strong>ystem</h5>
+                        <p>
+                            Um starten
+                        </p>
+                        <div class="card border-warning mb-3">
+                            <div class="card-header"><strong>1.</strong> Bitte installiere die entsprechende Browser-Erweiterung für dich.</div>
+                            <div class="card-body text-in">
+                                <div class="container text-center">
+                                    <div class="row">
+                                        <div class="col">
+                                            <a href="/">
+                                                <img src="/browser-logos/chrome/chrome_64x64.png">
+                                            </a>
+                                        </div>
+                                        <div class="col">
+                                            <img src="/browser-logos/firefox/firefox_64x64.png">
+                                        </div>
+                                        <div class="col">
+                                            <img src="/browser-logos/edge/edge_64x64.png">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card border-warning mb-3">
+                            <div class="card-header"><strong>2.</strong> Bitte kopiere deine persönliche URL und füge sie in das Browser-Plugin ein.</div>
+                            <div class="card-body text-in">
+                                <div class="input-group mb-3">
+                                    <input
+                                        type="text"
+                                        class="form-control text-bg-warning p-3"
+                                        aria-describedby="button-addon2"
+                                        value="{!! $host !!}"
+                                        id="myInput"
+                                        disabled
+                                    >
+                                    <button
+                                        class="btn btn-outline-secondary"
+                                        data-bs-placement="top"
+                                        data-bs-title="Copied to clipboard"
+                                        type="button"
+                                        id="button-addon2"
+                                    >
+                                        Kopiere
+                                    </button>
+                                </div>
+                                <center><img src="/insert.png" height="200" border="1"></center>
+                            </div>
+                        </div>
+                        <div class="card border-warning mb-3">
+                            <div class="card-header"><strong>3.</strong> Bitte wähle die Kategorien aus, für die du Cookies in deinem Browser zulassen möchtest.</div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    @foreach($categories as $category)
+                                        <div class="row">
+                                            <div class="col">
+                                                <input
+                                                    data-standard="1"
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    value="{!! $category->category_id !!}"
+                                                    id="flexSwitchCheckDefault{!! $category->category_id !!}"
+                                                    {!! $category->checked !!}
+                                                    {!! $category->disabled !!}
+                                                >
+                                                <label class="form-check-label" for="flexSwitchCheckDefault{!! $category->category_id !!}">
+                                                    {!! $category->category !!}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="onboarding" value="0">
+                        <button type="submit" class="btn btn-primary">Fertig</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -27,7 +125,7 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
 
-                <div class="card border-warning mb-3">
+                <!--div class="card border-warning mb-3">
                     <div class="card-header">Your url</div>
                     <div class="card-body text-in">
                         <div class="input-group mb-3">
@@ -50,9 +148,9 @@
                             </button>
                         </div>
                     </div>
-                </div>
+                </div-->
 
-                <div class="card border-warning mb-3">
+                <!--div class="card border-warning mb-3">
                     <div class="card-header">Your consenses</div>
                     <div class="card-body text-in">
 
@@ -67,7 +165,7 @@
                         </a>
 
                     </div>
-                </div>
+                </div-->
 
                 <div class="card">
                     <div class="card-header">{{ __('Visited Sites') }}</div>
@@ -108,6 +206,7 @@
         </div>
     </div>
     <script type="module">
+
         $( document ).ready(function() {
             $( "#button-addon2" ).on( "click", function() {
                 navigator.clipboard.writeText("{!! $host !!}");
@@ -117,7 +216,11 @@
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         });
 
-
+        @if($user->onboarding)
+            $( document ).ready(function() {
+                $('#onboarding').modal('show');
+            });
+        @endif
 
         $(".editClick").click(function () {
             let site_id = $(this).attr('id');

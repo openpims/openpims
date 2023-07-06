@@ -21,5 +21,7 @@ mix
     .copy('node_modules/bootstrap-icons/font/bootstrap-icons.css', 'public/bootstrap-icons.css')
     .copyDirectory('node_modules/bootstrap-icons/font/fonts', 'public/fonts')
 
+    .copyDirectory('node_modules/@browser-logos', 'public/browser-logos')
+
     .version()
 ;

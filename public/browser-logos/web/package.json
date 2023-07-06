@@ -1,0 +1,20 @@
+{
+  "bugs": "https://github.com/alrra/browser-logos/issues",
+  "description": "Web (f.k.a. Epiphany) browser logo",
+  "homepage": "https://github.com/alrra/browser-logos",
+  "keywords": [
+    "browser-logos",
+    "logo",
+    "epiphany",
+    "epiphany-logo",
+    "web",
+    "web-logo"
+  ],
+  "name": "@browser-logos/web",
+  "repository": {
+    "directory": "src/web",
+    "type": "git",
+    "url": "https://github.com/alrra/browser-logos.git"
+  },
+  "version": "3.0.1"
+}
