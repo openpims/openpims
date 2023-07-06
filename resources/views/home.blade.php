@@ -24,7 +24,7 @@
                                 <div class="container text-center">
                                     <div class="row">
                                         <div class="col">
-                                            <a href="/">
+                                            <a href="/chrome.zip">
                                                 <img src="/browser-logos/chrome/chrome_64x64.png">
                                             </a>
                                         </div>
