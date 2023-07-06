@@ -15,9 +15,6 @@
                     </div>
                     <div class="modal-body">
                         <h5>Herzlich willkommen bei deinem <strong>P</strong>ersönlichen <strong>I</strong>nformations <strong>M</strong>anagement <strong>S</strong>ystem</h5>
-                        <p>
-                            Um starten
-                        </p>
                         <div class="card border-warning mb-3">
                             <div class="card-header"><font size="18px">1.</font> Installiere die entsprechende Browser-Erweiterung für dich.</div>
                             <div class="card-body text-in">
