@@ -15,10 +15,12 @@ return new class extends Migration
         Schema::create('standards', function (Blueprint $table) {
             $table->integerIncrements('standard_id');
             $table->string('standard');
+            $table->string('description');
+            $table->string('mapping');
             $table->integer('user_id')->nullable()->default(null);
             $table->boolean('checked')->default(0);
             $table->boolean('disabled')->default(0);
-            $table->unique(['standard', 'user_id'], 'unique');
+            $table->unique(['mapping', 'user_id'], 'unique');
             $table->timestamps();
         });
     }

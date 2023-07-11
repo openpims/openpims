@@ -26,7 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'token',
-        'onboarding',
+        'setup',
     ];
 
     /**
@@ -61,6 +61,8 @@ class User extends Authenticatable implements MustVerifyEmail
             foreach ($standards as $standard) {
                 Standard::create([
                     'standard' => $standard->standard,
+                    'description' => $standard->description,
+                    'mapping' => $standard->mapping,
                     'checked' => $standard->checked,
                     'disabled' => $standard->disabled,
                     'user_id' => $user->user_id,

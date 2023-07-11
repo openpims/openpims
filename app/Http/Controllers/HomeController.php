@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Console\Supplier;
+use App\Console\Vendor;
 use App\Models\Category;
 use App\Models\Consent;
 use App\Models\Standard;
@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 
 class HomeController extends Controller
 {
@@ -30,34 +31,9 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('onboarding')) {
-            Auth::user()->update([
-                'onboarding' => $request->get('onboarding')
-            ]);
+        if (Auth::user()->setup) {
+            return redirect('/setup');
         }
-
-        if ($request->has('site_id') && $request->has('category_id')) {
-            $site_id = $request->get('site_id');
-            $category_id = $request->get('category_id');
-            Consent::create([
-                'user_id' => Auth::user()->user_id,
-                'category_id' => $category_id? $category_id: null,
-            ]);
-        }
-
-        $sql = sprintf("
-            SELECT *
-            FROM consents
-            JOIN categories USING (category_id)
-            JOIN sites USING (site_id)
-            WHERE
-                user_id IS NULL
-                OR user_id=%d
-            ORDER BY user_id, site_id, category_id
-        ",
-            Auth::user()->user_id
-        );
-        //$consents = DB::select($sql);
 
         $sql = sprintf("
             SELECT site_id, site
@@ -70,6 +46,31 @@ class HomeController extends Controller
         );
         $sites = DB::select($sql);
 
+        if ($request->has('site_id') && $request->has('category_id')) {
+            $site_id = $request->get('site_id');
+            $category_id = $request->get('category_id');
+            Consent::create([
+                'user_id' => Auth::user()->user_id,
+                'category_id' => $category_id? $category_id: null,
+            ]);
+        }
+
+        return view('home', [
+            'user' => Auth::user(),
+            'sites' => $sites,
+        ]);
+    }
+
+    public function setup(Request $request)
+    {
+        //setup erledigt
+        if ($request->has('setup')) {
+            Auth::user()->update([
+                'setup' => $request->get('setup')
+            ]);
+            return redirect('/home');
+        }
+
         $host = str_replace([
             'http://',
             'https://'
@@ -81,6 +82,7 @@ class HomeController extends Controller
         $sql = sprintf("SELECT
                 standard_id AS category_id,
                 standard AS category,
+                description,
                 IF(checked, 'checked', '') AS checked,
                 IF(disabled, 'disabled', '') AS disabled
             FROM standards
@@ -89,12 +91,11 @@ class HomeController extends Controller
         ", Auth::user()->user_id);
         $categories = DB::select($sql);
         foreach ($categories AS $id => $category) {
-            $categories[$id]->suppliers = [];
+            $categories[$id]->vendors = [];
         }
 
-        return view('home', [
+        return view('setup', [
             'user' => Auth::user(),
-            'sites' => $sites,
             'host' => $host,
             'categories' => $categories,
         ]);
@@ -151,7 +152,7 @@ class HomeController extends Controller
         ", Auth::user()->user_id);
         $categories = DB::select($sql);
         foreach ($categories AS $id => $category) {
-            $categories[$id]->suppliers = [];
+            $categories[$id]->vendors = [];
         }
 
         return $categories;
@@ -177,9 +178,9 @@ class HomeController extends Controller
         $categories = DB::select($sql);
 
         foreach ($categories AS $id => $category) {
-            $suppliers = Supplier::where('category_id', $category->category_id)->get(['supplier', 'supplier_id']);
-            $categories[$id]->suppliers = $suppliers;
-            $categories[$id]->amount = count($suppliers);
+            $vendors = Vendor::where('category_id', $category->category_id)->get(['vendor_id', 'vendor', 'url']);
+            $categories[$id]->vendors = $vendors;
+            $categories[$id]->amount = count($vendors);
         }
 
         return $categories;

@@ -61,7 +61,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="/home?onboarding=1">Setup</a>
+                                <a class="nav-link" href="/setup">Setup</a>
                             </li>
 
                             <li class="nav-item dropdown">

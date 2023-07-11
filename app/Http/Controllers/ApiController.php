@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Console\Supplier;
+use App\Models\Vendor;
 use App\Models\Category;
 use App\Models\Consent;
 use App\Models\Site;
@@ -57,34 +57,40 @@ class ApiController extends Controller
                 $categories_array = json_decode($result, true);
                 Log::info($categories_array);
 
-                foreach ($categories_array as $category => $suppliers) {
+                foreach ($categories_array as $category) {
 
-                    $standard = Standard::where('standard', $category)
-                        ->where('user_id', $user_id)
-                        ->first();
+                    $standard = null;
+                    if (array_key_exists('mapping', $category)) {
+                        $standard = Standard::where('mapping', $category['mapping'])
+                            ->where('user_id', $user_id)
+                            ->first();
+                    }
 
                     $cat = Category::firstOrCreate([
                         'site_id' => $site_id,
-                        'category' => $category,
-                        'standard_id' => $standard instanceof Category? $standard->standard_id: null,
+                        'category' => $category['category'],
+                        'standard_id' => $standard instanceof Standard? $standard->standard_id: null,
                     ]);
 
-                    //Suppliers in DB speichern
-                    foreach ($suppliers as $supplier) {
-                        Supplier::create([
-                            'supplier' => $supplier['supplier'],
-                            'category_id' => $cat->category_id
-                        ]);
+                    //Vendors in DB speichern
+                    if (array_key_exists('vendors', $category)) {
+                        foreach ($category['vendors'] as $vendor) {
+                            Vendor::create([
+                                'vendor' => $vendor['vendor'],
+                                'url' => $vendor['url'],
+                                'category_id' => $cat->category_id
+                            ]);
+                        }
                     }
                 }
 
                 //necessary category checken & Insert into consense
-                $standard = Standard::where('standard', 'necessary')
+                $standard = Standard::where('mapping', 'necessary')
                     ->where('user_id', $user_id)
                     ->first();
                 $necessary_category = Category::firstOrCreate([
                     'site_id' => $site_id,
-                    'category' => 'necessary',
+                    'category' => $standard->standard,
                 ], [
                     'standard_id' => $standard->standard_id,
                 ]);
@@ -111,7 +117,7 @@ class ApiController extends Controller
             if ($visit instanceof Visit && $visit->first) {
                 $categories = Category::where('site_id', $site_id)->get('category_id');
                 foreach ($categories as $category) {
-                    Consent::create([
+                    Consent::updateOrCreate([
                        'user_id' => $user_id,
                        'category_id' => $category->category_id
                     ]);
@@ -120,7 +126,7 @@ class ApiController extends Controller
                 $visit->save();
             }
 
-            //TODO get consenses
+            //consenses
             $sql = sprintf("
                 SELECT category
                 FROM consents

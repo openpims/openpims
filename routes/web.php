@@ -21,9 +21,10 @@ Route::group([
         return view('welcome');
     });
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
-    Route::post('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
     Auth::routes(['register' => true, 'verify' => true]);
     Route::resource('site', 'App\Http\Controllers\SiteController')->middleware(['auth', 'verified']);
+    Route::get('/setup', [App\Http\Controllers\SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
+    Route::post('/setup', [App\Http\Controllers\SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
     Route::get('/export', [App\Http\Controllers\HomeController::class, 'export'])->name('export')->middleware(['auth', 'verified']);
     Route::get('/category/{site_id}', [App\Http\Controllers\HomeController::class, 'category'])->name('category')->middleware(['auth', 'verified']);
     Route::get('/standard', [App\Http\Controllers\HomeController::class, 'standard'])->name('standard')->middleware(['auth', 'verified']);

@@ -12,6 +12,8 @@ class Standard extends Model
     protected $primaryKey = 'standard_id';
     protected $fillable = [
         'standard',
+        'description',
+        'mapping',
         'checked',
         'disabled',
         'user_id',

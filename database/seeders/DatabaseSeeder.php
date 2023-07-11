@@ -20,18 +20,26 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Standard::create([#1
-            'standard' => 'necessary',
+            'standard' => 'Unbedingt erforderliche Cookies',
+            'description' => 'Diese Cookies werden benötigt, damit Sie solche grundlegenden Funktionen wie Sicherheit, Identitätsprüfung und Netzwerkmanagement nutzen können. Sie können daher nicht deaktiviert werden.',
+            'mapping' => 'necessary',
             'checked' => 1,
             'disabled' => 1,
         ]);
         Standard::create([
-            'standard' => 'functional',
+            'standard' =>'Cookies für Marketingzwecke',
+            'description' =>'Cookies für Marketingzwecke werden verwendet, um die Effektivität von Werbung zu messen, Interessen von Besuchern zu erfassen und Werbeanzeigen an deren persönliche Bedürfnisse anzupassen.',
+            'mapping' => 'marketing',
         ]);
         Standard::create([
-            'standard' => 'statistics',
+            'standard' => 'Funktionale Cookies',
+            'description' => 'Funktionale Cookies werden verwendet, um bereits getätigte Angaben zu speichern und darauf basierend verbesserte und personalisierte Funktionen anzubieten.',
+            'mapping' => 'functional',
         ]);
         Standard::create([
-            'standard' => 'marketing',
+            'standard' => 'Analytics-Cookies',
+            'description' => 'Wir verwenden diese Cookies, um zu verstehen, wie unsere Website genutzt wird, um Fehler zu entdecken und die Funktionalität der Website zu verbessern.',
+            'mapping' => 'analytics',
         ]);
         User::create([
             'email' => 'portalix@gmail.com',
