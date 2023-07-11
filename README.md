@@ -1,7 +1,8 @@
 # openPIMS
-Ist eine ein Entwurf für ein Personal Information Management System auf openSource-basis.
 
-Es besteht aus eine zentralen Server aktuell einem Browser-Plugin für Chrome
+Ist eine ein Entwurf für ein Personal Information Management System auf openSource-Basis.
+
+Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chrome.
 
 ## Category-Definition auf Betreiber-Seite:
 Json-Array mit folgenden Parametern
