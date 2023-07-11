@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
         ]);
         Standard::create([
             'standard' => 'Analytics-Cookies',
-            'description' => 'Wir verwenden diese Cookies, um zu verstehen, wie unsere Website genutzt wird, um Fehler zu entdecken und die Funktionalität der Website zu verbessern.',
+            'description' => 'Analytics-Cookies werden verwendet, um zu verstehen, wie Webseiten genutzt werden, um Fehler zu entdecken und Funktionalität von Webseiten zu verbessern.',
             'mapping' => 'analytics',
         ]);
         User::create([
