@@ -12,5 +12,6 @@ class Site extends Model
     protected $fillable = [
         'site',
         'url',
+        'not_loaded',
     ];
 }

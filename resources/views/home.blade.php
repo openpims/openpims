@@ -13,6 +13,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <p>Hier hast du die Möglichkeit, die Anbieter auf der Ebene der Kategorien zu bearbeiten.</p>
                         <div class="accordion" id="accordionExample"></div>
                     </div>
                     <div class="modal-footer">
@@ -28,13 +29,13 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">{{ __("Hier werden alle von dir besuchten Seiten angezeigt, die von OpenPIMS verwaltet werden.") }}</div>
+                    <div class="card-header">{{ __("Hier werden alle Seiten, die du besucht hast und von OpenPIMS betreut werden, dargestellt.") }}</div>
                     <div class="card-body">
                         <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th>Site</th>
-                                <th class="text-end">Action</th>
+                                <th class="text-end">Anbieter</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -83,15 +84,16 @@
                     var show = i? '': 'show';
                     var collapsed = i? 'collapsed': '';
 
-                    var suppliers = category[i].suppliers;
+                    var vendors = category[i].vendors;
 
                     var sup = '';
-                    for (var j = 0; j < suppliers.length; j++) {
-                        sup = sup +
-                            '<div class="form-check form-switch">' +
-                            '<small><input class="form-check-input" type="checkbox" role="switch" value="' + suppliers[j].supplier_id + '" id="flexSwitchCheckDefault' + category[i].category_id +'"></small>' +
-                            '<label class="form-check-label" for="flexSwitchCheckDefault' + suppliers[j].supplier_id +'"> <small><a href="' + suppliers[j].url + '" target="_blank">' + suppliers[j].supplier + '</a></small></label>' +
-                            '</div>';
+                    for (var j = 0; j < vendors.length; j++) {
+                        // sup = sup +
+                        //     '<div class="form-check form-switch">' +
+                        //     '<small><input class="form-check-input" type="checkbox" role="switch" value="' + vendors[j].vendor_id + '" id="flexSwitchCheckDefault' + category[i].category_id +'"></small>' +
+                        //     '<label class="form-check-label" for="flexSwitchCheckDefault' + vendors[j].vendor_id +'"> <small><a href="' + vendors[j].url + '" target="_blank">' + vendors[j].vendor + '</a></small></label>' +
+                        //     '</div>';
+                        sup = sup + '<li><a href="' + vendors[j].url + '" target="_blank">' + vendors[j].vendor + '</a></li>';
                     }
 
                     sel.append(

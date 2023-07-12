@@ -27,7 +27,6 @@ Route::group([
     Route::post('/setup', [App\Http\Controllers\SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
     Route::get('/export', [App\Http\Controllers\HomeController::class, 'export'])->name('export')->middleware(['auth', 'verified']);
     Route::get('/category/{site_id}', [App\Http\Controllers\HomeController::class, 'category'])->name('category')->middleware(['auth', 'verified']);
-    Route::get('/standard', [App\Http\Controllers\HomeController::class, 'standard'])->name('standard')->middleware(['auth', 'verified']);
     Route::get('/consent/{standard}/{category_id}', [App\Http\Controllers\HomeController::class, 'consent'])->name('category')->middleware(['auth', 'verified']);
 });
 

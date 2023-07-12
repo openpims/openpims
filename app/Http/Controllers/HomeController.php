@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Console\Vendor;
+use App\Models\Vendor;
 use App\Models\Category;
 use App\Models\Consent;
 use App\Models\Standard;
@@ -44,60 +44,10 @@ class HomeController extends Controller
         ",
             Auth::user()->user_id
         );
-        $sites = DB::select($sql);
-
-        if ($request->has('site_id') && $request->has('category_id')) {
-            $site_id = $request->get('site_id');
-            $category_id = $request->get('category_id');
-            Consent::create([
-                'user_id' => Auth::user()->user_id,
-                'category_id' => $category_id? $category_id: null,
-            ]);
-        }
 
         return view('home', [
             'user' => Auth::user(),
-            'sites' => $sites,
-        ]);
-    }
-
-    public function setup(Request $request)
-    {
-        //setup erledigt
-        if ($request->has('setup')) {
-            Auth::user()->update([
-                'setup' => $request->get('setup')
-            ]);
-            return redirect('/home');
-        }
-
-        $host = str_replace([
-            'http://',
-            'https://'
-        ], [
-            'http://'.Auth::user()->token.'.',
-            'https://'.Auth::user()->token.'.'
-        ], env('APP_URL'));
-
-        $sql = sprintf("SELECT
-                standard_id AS category_id,
-                standard AS category,
-                description,
-                IF(checked, 'checked', '') AS checked,
-                IF(disabled, 'disabled', '') AS disabled
-            FROM standards
-            WHERE user_id = %d
-            ORDER BY standard_id
-        ", Auth::user()->user_id);
-        $categories = DB::select($sql);
-        foreach ($categories AS $id => $category) {
-            $categories[$id]->vendors = [];
-        }
-
-        return view('setup', [
-            'user' => Auth::user(),
-            'host' => $host,
-            'categories' => $categories,
+            'sites' => DB::select($sql),
         ]);
     }
 
@@ -170,7 +120,7 @@ class HomeController extends Controller
             LEFT JOIN standards USING (standard_id)
             WHERE consents.user_id = %d
             AND site_id = %d
-            ORDER BY standard_id DESC
+            ORDER BY disabled DESC
         ",
             Auth::user()->user_id,
             $site_id

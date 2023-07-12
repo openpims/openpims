@@ -30,12 +30,13 @@ class ApiController extends Controller
 
         if (!is_null($url)) {
             $site_extracted = parse_url($url, PHP_URL_HOST);
-
             //get Site
             $site_id = null;
             $site = Site::firstOrCreate([
                 'site' => $site_extracted,
                 'url' => $url
+            ], [
+                'not_loaded' => 1,
             ]);
             $site_id =$site->site_id;
 
@@ -57,6 +58,8 @@ class ApiController extends Controller
                 $categories_array = json_decode($result, true);
                 Log::info($categories_array);
 
+                $necessary_category = false;
+
                 foreach ($categories_array as $category) {
 
                     $standard = null;
@@ -64,12 +67,22 @@ class ApiController extends Controller
                         $standard = Standard::where('mapping', $category['mapping'])
                             ->where('user_id', $user_id)
                             ->first();
+
+                        if ($category['mapping']=='necessary') {
+                            $necessary_category = true;
+                        }
                     }
 
                     $cat = Category::firstOrCreate([
                         'site_id' => $site_id,
                         'category' => $category['category'],
                         'standard_id' => $standard instanceof Standard? $standard->standard_id: null,
+                    ]);
+
+                    //init consent
+                    Consent::create([
+                        'user_id' => $user_id,
+                        'category_id' => $cat->category_id
                     ]);
 
                     //Vendors in DB speichern
@@ -85,21 +98,26 @@ class ApiController extends Controller
                 }
 
                 //necessary category checken & Insert into consense
-                $standard = Standard::where('mapping', 'necessary')
-                    ->where('user_id', $user_id)
-                    ->first();
-                $necessary_category = Category::firstOrCreate([
-                    'site_id' => $site_id,
-                    'category' => $standard->standard,
-                ], [
-                    'standard_id' => $standard->standard_id,
-                ]);
+                if (!$necessary_category) {
 
-                Consent::create([
-                    'user_id' => $user_id,
-                    'category_id' => $necessary_category->category_id
-                ]);
+                    $standard = Standard::where('mapping', 'necessary')
+                        ->where('user_id', $user_id)
+                        ->first();
 
+                    $nes_cat = Category::create([
+                        'site_id' => $site_id,
+                        'category' => $standard->standard,
+                    ], [
+                        'standard_id' => $standard->standard_id,
+                    ]);
+
+                    Consent::create([
+                        'user_id' => $user_id,
+                        'category_id' => $nes_cat->category_id
+                    ]);
+                }
+
+                // clear not loaded flag
                 $site->not_loaded = 0;
                 $site->save();
 
@@ -111,22 +129,22 @@ class ApiController extends Controller
             }
 
             //load categories from site and save in consents
-            $visit = Visit::where('site_id', $site_id)
-                ->where('user_id', $user_id)
-                ->first();
-            if ($visit instanceof Visit && $visit->first) {
-                $categories = Category::where('site_id', $site_id)->get('category_id');
-                foreach ($categories as $category) {
-                    Consent::updateOrCreate([
-                       'user_id' => $user_id,
-                       'category_id' => $category->category_id
-                    ]);
-                }
-                $visit->first = 0;
-                $visit->save();
-            }
+//            $visit = Visit::where('site_id', $site_id)
+//                ->where('user_id', $user_id)
+//                ->first();
+//            if ($visit instanceof Visit && $visit->first) {
+//                $categories = Category::where('site_id', $site_id)->get('category_id');
+//                foreach ($categories as $category) {
+//                    Consent::updateOrCreate([
+//                       'user_id' => $user_id,
+//                       'category_id' => $category->category_id
+//                    ]);
+//                }
+//                $visit->first = 0;
+//                $visit->save();
+//            }
 
-            //consenses
+            //consenses auslesen und ausgeben
             $sql = sprintf("
                 SELECT category
                 FROM consents
