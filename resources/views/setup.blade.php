@@ -98,7 +98,7 @@
                     <div class="card border-warning mb-3">
                         <div class="card-header">
                             <font size="18px">4.</font>
-                            Super, von meiner Seite scheint alles fertig eingerichtet.
+                            Großartig, soweit ich das sehe, scheint alles ordnungsgemäß eingerichtet zu sein.
                         </div>
                         <div class="card-body">
                             <div class="modal-footer">
