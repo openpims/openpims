@@ -120,13 +120,13 @@ class ApiController extends Controller
                 // clear not loaded flag
                 $site->not_loaded = 0;
                 $site->save();
-
-                //Log user_sites Last visit
-                Visit::updateOrCreate(
-                    ['site_id' =>  $site_id],
-                    ['user_id' => $user_id, 'updated_at' => now()]
-                );
             }
+
+            //Log user_sites Last visit
+            Visit::updateOrCreate(
+                ['site_id' =>  $site_id],
+                ['user_id' => $user_id, 'updated_at' => now()]
+            );
 
             //load categories from site and save in consents
 //            $visit = Visit::where('site_id', $site_id)

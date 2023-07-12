@@ -89,7 +89,7 @@ class HomeController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function standard()
+    /*public function standard()
     {
         $sql = sprintf("SELECT
                 standard_id AS category_id,
@@ -106,7 +106,7 @@ class HomeController extends Controller
         }
 
         return $categories;
-    }
+    }*/
 
     public function category(int $site_id)
     {
