@@ -58,7 +58,9 @@ class HomeController extends Controller
         $sql = "SELECT site, category
             FROM consents
             JOIN categories USING (category_id)
+            LEFT JOIN standards USING (standard_id)
             JOIN sites USING (site_id)
+            WHERE COALESCE(consents.checked, standards.checked, 0)
         ";
         $consents = DB::select($sql);
 
