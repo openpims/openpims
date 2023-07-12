@@ -31,14 +31,6 @@ class SetupController extends Controller
      */
     public function index(Request $request)
     {
-        //setup erledigt
-        if ($request->has('setup')) {
-            Auth::user()->update([
-                'setup' => $request->get('setup')
-            ]);
-            return redirect('/home');
-        }
-
         $host = str_replace([
             'http://',
             'https://'
@@ -47,6 +39,39 @@ class SetupController extends Controller
             'https://'.Auth::user()->token.'.'
         ], env('APP_URL'));
 
+        $extension = false;
+        $valid_url = false;
+        $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+        if(array_key_exists('x-openpims', $headers)) {
+
+            //extension installiert
+            $extension = true;
+
+            //url vergleichen
+            if ($headers['x-openpims'] == $host) {
+                $valid_url = true;
+            }
+        }
+
+        if ($extension && $valid_url) {
+            Auth::user()->update([
+                'setup' => 0
+            ]);
+        } else {
+            Auth::user()->update([
+                'setup' => 1
+            ]);
+        }
+
+        //setup erledigt
+        //if ($request->has('setup')) {
+        //    Auth::user()->update([
+        //        'setup' => $request->get('setup')
+        //    ]);
+        //    return redirect('/home');
+        //}
+
+        //Lese die Standard-Kategorien aus
         $sql = sprintf("SELECT
                 standard_id AS category_id,
                 standard AS category,
@@ -66,43 +91,8 @@ class SetupController extends Controller
             'user' => Auth::user(),
             'host' => $host,
             'categories' => $categories,
+            'extension' => $extension,
+            'valid_url' => $valid_url,
         ]);
-    }
-
-    public function standard()
-    {
-        $sql = sprintf("SELECT
-                standard_id AS category_id,
-                standard AS category,
-                IF(checked, 'checked', '') AS checked,
-                IF(disabled, 'disabled', '') AS disabled
-            FROM standards
-            WHERE user_id = %d
-            ORDER BY standard_id
-        ", Auth::user()->user_id);
-        $categories = DB::select($sql);
-        foreach ($categories AS $id => $category) {
-            $categories[$id]->suppliers = [];
-        }
-
-        return $categories;
-    }
-
-    public function consent(bool $standard_bool, int $category_id)
-    {
-        if ($standard_bool) {
-            $standard = Standard::find($category_id);
-            $standard->checked = $standard->checked? 0: 1;
-            $standard->save();
-        } else {
-            $consent = Consent::where('user_id', Auth::user()->user_id)
-                ->where('category_id', $category_id)
-                ->first();
-            if ($consent instanceof Consent) {
-                $consent->checked = $consent->checked? 0: 1;
-                $consent->save();
-            }
-        }
-
     }
 }

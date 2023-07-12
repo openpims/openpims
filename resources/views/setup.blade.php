@@ -83,14 +83,28 @@
                     <div class="card border-warning mb-3">
                         <div class="card-header">
                             <font size="18px">4.</font>
-                            Wenn du das Setup abgeschlossen hast, bestätige das doch kurz.
+                            Wenn du das Setup abgeschlossen hast, dann überprüfen wir es gerne für dich.
                         </div>
                         <div class="card-body">
                             <div class="modal-footer">
                                 <form id="editForm" method="post" action="/setup">
                                     @csrf
-                                    <input type="hidden" name="setup" value="0">
-                                    <button type="submit" class="btn btn-primary">Ich habe das Setup abgeschlossen.</button>
+                                    <button type="submit" class="btn btn-primary">Überprüfe hier dein Setup.</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="card border-warning mb-3">
+                        <div class="card-header">
+                            <font size="18px">4.</font>
+                            Super, von meiner Seite scheint alles fertig eingerichtet.
+                        </div>
+                        <div class="card-body">
+                            <div class="modal-footer">
+                                <form id="editForm" method="post" action="/setup">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">Du kannst dies jederzeit erneut überprüfen.</button>
                                 </form>
                             </div>
                         </div>
