@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group([
-    'domain' => App::environment('local') ? 'openpims.test' : 'openpims.de'
+    'domain' => App::environment('local') ? 'openpims.test' : env('APP_DOMAIN')
 ], function () {
     Route::get('/', function () {
         return view('welcome');
@@ -32,7 +32,7 @@ Route::group([
 
 
 Route::group([
-    'domain' => App::environment('local') ? '{token}.openpims.test' : '{token}.openpims.de'
+    'domain' => App::environment('local') ? '{token}.openpims.test' : '{token}.' . env('APP_DOMAIN')
 ], function () {
     //Route::resource('/{site?}', 'App\Http\Controllers\ApiController');
     Route::resource('/', 'App\Http\Controllers\ApiController');
