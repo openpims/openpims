@@ -79,12 +79,6 @@ class ApiController extends Controller
                         'standard_id' => $standard instanceof Standard? $standard->standard_id: null,
                     ]);
 
-                    //init consent
-                    Consent::create([
-                        'user_id' => $user_id,
-                        'category_id' => $cat->category_id
-                    ]);
-
                     //Vendors in DB speichern
                     if (array_key_exists('vendors', $category)) {
                         foreach ($category['vendors'] as $vendor) {
@@ -104,23 +98,36 @@ class ApiController extends Controller
                         ->where('user_id', $user_id)
                         ->first();
 
-                    $nes_cat = Category::create([
+                    Category::create([
                         'site_id' => $site_id,
                         'category' => $standard->standard,
                     ], [
                         'standard_id' => $standard->standard_id,
                     ]);
 
-                    Consent::create([
-                        'user_id' => $user_id,
-                        'category_id' => $nes_cat->category_id
-                    ]);
                 }
 
                 // clear not loaded flag
                 $site->not_loaded = 0;
                 $site->save();
             }
+
+            //Load categories for this site an init consent
+            $sql = sprintf("SELECT category_id
+                FROM categories
+                WHERE site_id = %d
+            ", $site_id);
+            $categories_loaded = DB::select($sql);
+            foreach ($categories_loaded as $category_loaded) {
+                $sql = sprintf("INSERT IGNORE INTO consents VALUE (NULL, %d, %d, NULL, TIMESTAMP(NOW()), TIMESTAMP(NOW()))", $user_id, $category_loaded->category_id);
+                DB::insert($sql);
+            }
+
+            //init consent
+            //Consent::create([
+            //    'user_id' => $user_id,
+            //    'category_id' => $cat->category_id
+            //]);
 
             //Log user_sites Last visit
             Visit::updateOrCreate(
