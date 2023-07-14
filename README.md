@@ -9,7 +9,8 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
   graph TD;
       openPIMS-->Browser;
       Browser-->Webseite;
-      Webseite<->openPIMS;
+      Webseite-->openPIMS;
+      openPIMS-->Webseite;
 ```
 
 ## Category-Definition auf Betreiber-Seite:
