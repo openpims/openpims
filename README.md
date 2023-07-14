@@ -8,9 +8,8 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
 ```mermaid
   graph TD;
       A-->B;
-      A-->C;
-      B-->D;
-      C-->D;
+      B-->C;
+      C-->A;
 ```
 
 ## Category-Definition auf Betreiber-Seite:
