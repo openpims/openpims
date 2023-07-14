@@ -93,6 +93,7 @@ class SetupController extends Controller
             'categories' => $categories,
             'extension' => $extension,
             'valid_url' => $valid_url,
+            'isPost' => $request->isMethod('post')
         ]);
     }
 }

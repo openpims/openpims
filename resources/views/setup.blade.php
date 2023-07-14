@@ -10,20 +10,36 @@
                     <strong>M</strong>anagement
                     <strong>S</strong>ystem
                 </h5>
-                @if(!$user->setup)
-                    <div class="card border-warning mb-3">
-                        <div class="card-header">
-                            <font size="18px">0.</font>
-                            Setup ist fertig und abgeschlossen.
-                        </div>
-                        <div class="card-body text-in">
-                            <div class="container text-center">
-                                <font size="64">
-                                    <i style="color: green;" class="bi bi-check-circle-fill"></i>
-                                </font>
+                @if($isPost)
+                    @if($user->setup)
+                        <div class="card border-warning mb-3">
+                            <div class="card-header">
+                                <font size="18px">0.</font>
+                                Setup ist leider noch nicht vollständig.
+                            </div>
+                            <div class="card-body text-in">
+                                <div class="container text-center">
+                                    <font size="64">
+                                        <i style="color: red;" class="bi bi-x-circle-fill"></i>
+                                    </font>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="card border-warning mb-3">
+                            <div class="card-header">
+                                <font size="18px">0.</font>
+                                Setup ist fertig und abgeschlossen.
+                            </div>
+                            <div class="card-body text-in">
+                                <div class="container text-center">
+                                    <font size="64">
+                                        <i style="color: green;" class="bi bi-check-circle-fill"></i>
+                                    </font>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @endif
                 <div class="card border-warning mb-3">
                     <div class="card-header">
