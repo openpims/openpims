@@ -7,9 +7,9 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
 
 ```mermaid
   graph TD;
-      A-->B;
-      B-->C;
-      C-->A;
+      openPIMS-->Browser;
+      Browser-->Webseite;
+      Webseite<->openPIMS;
 ```
 
 ## Category-Definition auf Betreiber-Seite:
