@@ -6,7 +6,7 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
 
 
 ```mermaid
-  stateDiagram-v2;
+  graph TD;
       openPIMS-->Browser;
       Browser-->Webseite;
       Webseite-->openPIMS;
