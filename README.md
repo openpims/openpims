@@ -4,6 +4,15 @@ Ist eine ein Entwurf für ein Personal Information Management System auf openSou
 
 Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chrome.
 
+
+```mermaid
+  graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;
+```
+
 ## Category-Definition auf Betreiber-Seite:
 Json-Array mit folgenden Parametern
 
