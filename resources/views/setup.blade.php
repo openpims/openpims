@@ -4,11 +4,31 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <h5>Herzlich willkommen bei deinem <strong>P</strong>ersönlichen <strong>I</strong>nformations
-                    <strong>M</strong>anagement <strong>S</strong>ystem</h5>
+                <h5>Herzlich willkommen bei deinem
+                    <strong>P</strong>ersönlichen
+                    <strong>I</strong>nformations
+                    <strong>M</strong>anagement
+                    <strong>S</strong>ystem
+                </h5>
+                @if(!$user->setup)
+                    <div class="card border-warning mb-3">
+                        <div class="card-header">
+                            <font size="18px">0.</font>
+                            Setup ist fertig und abgeschlossen.
+                        </div>
+                        <div class="card-body text-in">
+                            <div class="container text-center">
+                                <font size="64">
+                                    <i style="color: green;" class="bi bi-check-circle-fill"></i>
+                                </font>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="card border-warning mb-3">
-                    <div class="card-header"><font size="18px">1.</font> Installiere die entsprechende
-                        Browser-Erweiterung für dich.
+                    <div class="card-header">
+                        <font size="18px">1.</font>
+                        Installiere die entsprechende Browser-Erweiterung für dich.
                     </div>
                     <div class="card-body text-in">
                         <div class="container text-center">
@@ -30,10 +50,14 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card-footer">
+                        Gehe in die Extension-Verwaltung deines Browser und lade die entpackte Erweiterung
+                    </div>
                 </div>
                 <div class="card border-warning mb-3">
-                    <div class="card-header"><font size="18px">2.</font> Kopiere deine persönliche URL und füge sie in
-                        das Browser-Plugin ein.
+                    <div class="card-header">
+                        <font size="18px">2.</font>
+                        Kopiere deine persönliche URL und füge sie in das Browser-Plugin ein.
                     </div>
                     <div class="card-body text-in">
                         <div class="input-group mb-3">
@@ -57,10 +81,14 @@
                         </div>
                         <center><img src="/insert.png" height="150" border="1"></center>
                     </div>
+                    <div class="card-footer">
+                        Im Bereich Optionen fügst du dann deine persönliche Url ein
+                    </div>
                 </div>
                 <div class="card border-warning mb-3">
-                    <div class="card-header"><font size="18px">3.</font> Wähle die Kategorien aus, für die du Cookies in
-                        deinem Browser zulassen möchtest.
+                    <div class="card-header">
+                        <font size="18px">3.</font>
+                        Wähle die Kategorien aus, für die du Cookies in deinem Browser zulassen möchtest.
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -111,8 +139,6 @@
                     </div>
                 @endif
             </div>
-
-
         </div>
     <script type="module">
         $(document).ready(function () {
