@@ -4,6 +4,17 @@ Ist eine ein Entwurf für ein Personal Information Management System auf openSou
 
 Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chrome.
 
+
+```mermaid
+  graph TD;
+      openPIMS-->Chrome;
+      openPIMS-->Firefox;
+      Chrome-->Webseite;
+      Firefox-->Webseite;
+      Webseite-->openPIMS;
+      openPIMS-->Webseite;
+```
+
 ## Category-Definition auf Betreiber-Seite:
 Json-Array mit folgenden Parametern
 
