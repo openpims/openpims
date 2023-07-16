@@ -8,9 +8,7 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
 ```mermaid
   graph TD;
       openPIMS-->Chrome;
-      openPIMS-->Firefox;
       Chrome-->Webseite;
-      Firefox-->Webseite;
       Webseite-->openPIMS;
       openPIMS-->Webseite;
 ```
