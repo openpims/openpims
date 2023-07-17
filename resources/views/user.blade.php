@@ -13,6 +13,7 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Site</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -20,6 +21,9 @@
                             <tbody>
                             @foreach($users as $user)
                                 <tr>
+                                    <td>
+                                        {!! $user->user_id !!}
+                                    </td>
                                     <td>
                                         {!! $user->email !!}
                                     </td>
