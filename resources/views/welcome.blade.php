@@ -28,7 +28,7 @@
 
             <div class="max-w-7xl mx-auto p-6 lg:p-8">
                 <div class="flex justify-center">
-                    <img src="openpims.png" width="64">
+                    <img src="openpims.svg" width="512">
                 </div>
 
                 <div class="flex justify-center mt-16 px-0 sm:items-center sm:justify-between">
