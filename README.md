@@ -54,7 +54,13 @@ Das Vendors-Array hat folgende Struktur
             "text": "Test-Cookies"
         }
     ]
-    
+
+## Workflow
+```mermaid
+  sequenceDiagram
+    Website->>openPIMS: Hier ist der User und unsere Cookie-Definition
+    openPIMS-->>Website: und hier der Consens des Users
+```
 
 ## Förderung
 Das Projekt ist durch das das Bundesministerium für Bildung und Forschung (BMBF) gefördert .
