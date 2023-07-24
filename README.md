@@ -9,7 +9,7 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
   graph LR;
       A((openPIMS)) --> Chrome;
       Chrome --> Webseite;
-      Webseite <-> A;
+      Webseite <--> A;
 ```
 
 ## Timeline
