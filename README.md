@@ -7,9 +7,9 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
 
 ```mermaid
   graph LR;
-      A((openPIMS)) --> hrome;
+      A((openPIMS)) --> Chrome;
       Chrome --> Webseite;
-      Webseite <--> A;
+      Webseite <<-->> A;
 ```
 
 ## Timeline
