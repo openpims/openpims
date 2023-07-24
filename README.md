@@ -1,9 +1,8 @@
 # openPIMS
 
-Ist eine ein Entwurf für ein Personal Information Management System auf openSource-Basis.
+openPIMS ist ein Entwurf für ein Personal Information Management System auf openSource-Basis.
 
 Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chrome.
-
 
 ```mermaid
   graph LR;
