@@ -7,9 +7,7 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
 ```mermaid
   graph LR;
       A((openPIMS)) --> Chrome;
-      A --> Firefox;
-      Chrome --> Webseite;
-      Firefox --> Webseite;
+      Chrome<br>Firefox<br>Edge --> Webseite;
       Webseite <--> A;
 ```
 
