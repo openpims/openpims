@@ -21,10 +21,18 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/home') }}">
-                    <img src="/openpims.png" width="32" height="32" class="d-inline-block align-top" alt="">
-                    {{ config('app.name', 'openPIMS') }}
-                </a>
+                @guest
+                    <a class="navbar-brand" href="{{ url('/') }}">
+                        <img src="/openpims.png" width="32" height="32" class="d-inline-block align-top" alt="">
+                        {{ config('app.name', 'openPIMS') }}
+                    </a>
+                @else
+                    <a class="navbar-brand" href="{{ url('/home') }}">
+                        <img src="/openpims.png" width="32" height="32" class="d-inline-block align-top" alt="">
+                        {{ config('app.name', 'openPIMS') }}
+                    </a>
+                @endguest
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>

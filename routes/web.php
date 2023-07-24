@@ -18,7 +18,7 @@ Route::group([
     'domain' => App::environment('local') ? 'openpims.test' : env('APP_DOMAIN')
 ], function () {
     Route::get('/', function () {
-        return view('welcome');
+        return view('index');
     });
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
     Auth::routes(['register' => true, 'verify' => true]);
