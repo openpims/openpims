@@ -70,7 +70,7 @@ Das Vendors-Array hat folgende Struktur
     User->>Website: Hier meine User-Url
     Website->>openPIMS: Hier ist die User-Url und unsere Cookie-Definition
     openPIMS->>Website: und hier der Consens des Users
-    Webseite->>User: Hier die Cookies
+    Website->>User: Hier die Cookies
 ```
 
 ## Förderung
