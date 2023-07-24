@@ -67,10 +67,10 @@ Das Vendors-Array hat folgende Struktur
 ## Workflow
 ```mermaid
   sequenceDiagram
-    User->Website: Hier meine User-Url
+    User->>Website: Hier meine User-Url
     Website->>openPIMS: Hier ist die User-Url und unsere Cookie-Definition
-    openPIMS-->>Website: und hier der Consens des Users
-    Webseite-->User: Hier die Cookies
+    openPIMS->>Website: und hier der Consens des Users
+    Webseite->>User: Hier die Cookies
 ```
 
 ## Förderung
