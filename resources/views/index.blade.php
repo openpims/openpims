@@ -117,12 +117,13 @@
                                     <small>Analytics-Cookies werden verwendet, um zu verstehen, wie Webseiten genutzt werden, um Fehler zu entdecken und Funktionalität von Webseiten zu verbessern.</small>
                                 </label>
                             </div>
-
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
+        <a href="/datenschutz.html">
+            Datenschutzerklärung
+        </a>
     </div>
 @endsection
