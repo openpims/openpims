@@ -12,6 +12,12 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
       Webseite<-->openPIMS;
 ```
 
+## Timeline
+```mermaid
+  timeline
+    Dez 2021 : TTDSG §26
+```  
+
 ## Category-Definition auf Betreiber-Seite:
 Json-Array mit folgenden Parametern
 
