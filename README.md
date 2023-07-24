@@ -16,6 +16,9 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
 ```mermaid
   timeline
     Dez 2021 : TTDSG §26
+    Jul 2022 : Referentenentwurf
+    Jun 2023 : Verordnungsentwurf
+    Dez 2023 : ??? Verordnung ???
 ```  
 
 ## Category-Definition auf Betreiber-Seite:
