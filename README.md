@@ -10,6 +10,7 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
       B --> C(Webseite);
       C <--> A;
       style A fill:orange
+      style B fill:white
 ```
 
 ## Timeline
