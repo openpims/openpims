@@ -9,8 +9,7 @@ Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chro
   graph LR;
       openPIMS((Circle))-->Chrome;
       Chrome-->Webseite;
-      Webseite-->openPIMS;
-      openPIMS-->Webseite;
+      Webseite<-->openPIMS;
 ```
 
 ## Category-Definition auf Betreiber-Seite:
