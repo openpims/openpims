@@ -122,9 +122,6 @@
                 </div>
             </div>
         </div>
-
-
-
         <div class="row">
             <div class="text-start">
                 <img src="https://prototypefund.de/wp-content/uploads/2016/07/logo-bmbf.svg">
