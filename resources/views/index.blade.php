@@ -128,7 +128,7 @@
             </div>
             <div class="text-end">
                 <a href="/datenschutz.html">
-                    Datenschutzerklärung
+                    Datenschutzerklärung.
                 </a>
             </div>
         </div>
