@@ -124,11 +124,11 @@
         </div>
         <div class="row">
             <div class="text-start">
-                <img src="https://prototypefund.de/wp-content/uploads/2016/07/logo-bmbf.svg">
+                <img src="/BMBF_Logo-dark.svg">
             </div>
             <div class="text-end">
                 <a href="/datenschutz.html">
-                    Datenschutzerklärung.
+                    Datenschutzerklärung
                 </a>
             </div>
         </div>
