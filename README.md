@@ -77,5 +77,5 @@ Das Vendors-Array hat folgende Struktur
 
 ## Förderung
 Das Projekt ist durch das das Bundesministerium für Bildung und Forschung (BMBF) gefördert .
-
+Logo
 ![](https://prototypefund.de/wp-content/uploads/2016/07/logo-bmbf.svg)
