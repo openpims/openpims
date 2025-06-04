@@ -13,7 +13,7 @@
                         für den Zugriff auf Webseiten und ist eine Implementierung auf
                         <a href="https://github.com/openpims" target="_blank">Open Source-Basis</a>
                         nach dem im
-                        <a href="https://dejure.org/gesetze/TTDSG/26.html" target="_blank">TTDSG §26-Gesetz</a>
+                        <a href="https://dejure.org/gesetze/TDDDG/26.html" target="_blank">TDDDG §26-Gesetz</a>
                         definierten Richtlinien.
                     </div>
                 </div>
