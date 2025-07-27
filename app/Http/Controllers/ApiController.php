@@ -26,6 +26,8 @@ class ApiController extends Controller
         Log::info($token);
         Log::info($url);
 
+        $cookies = [];
+
         if (!is_null($url)) {
             $site_extracted = parse_url($url, PHP_URL_HOST);
             //get Site
