@@ -15,8 +15,8 @@ return new class extends Migration
         Schema::create('consents', function (Blueprint $table) {
             $table->integerIncrements('consent_id');
             $table->integer('user_id')->unsigned();
-            $table->integer('category_id')->unsigned();
-            $table->unique(['user_id', 'category_id'], 'unique');
+            $table->integer('cookie_id')->unsigned();
+            $table->unique(['user_id', 'cookie_id'], 'unique');
             $table->boolean('checked')->nullable()->default(null);
             $table->timestamps();
         });

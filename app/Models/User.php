@@ -57,6 +57,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $user->token = Str::lower(Str::random(8));
             $user->save();
 
+            /*
             $standards = Standard::where('user_id', null)->get();
             foreach ($standards as $standard) {
                 Standard::create([
@@ -67,7 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail
                     'disabled' => $standard->disabled,
                     'user_id' => $user->user_id,
                 ]);
-            }
+            }*/
         });
     }
 }

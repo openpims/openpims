@@ -26,8 +26,6 @@ class ApiController extends Controller
         Log::info($token);
         Log::info($url);
 
-        $categories = [];
-
         if (!is_null($url)) {
             $site_extracted = parse_url($url, PHP_URL_HOST);
             //get Site
@@ -55,55 +53,25 @@ class ApiController extends Controller
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                 $result= curl_exec ($ch);
                 curl_close ($ch);
-                $categories_array = json_decode($result, true);
-                Log::info($categories_array);
-
-                $necessary_category = false;
-
-                foreach ($categories_array as $category) {
-
-                    $standard = null;
-                    if (array_key_exists('mapping', $category)) {
-                        $standard = Standard::where('mapping', $category['mapping'])
-                            ->where('user_id', $user_id)
-                            ->first();
-
-                        if ($category['mapping']=='necessary') {
-                            $necessary_category = true;
-                        }
-                    }
-
-                    $cat = Category::firstOrCreate([
-                        'site_id' => $site_id,
-                        'category' => $category['category'],
-                        'standard_id' => $standard instanceof Standard? $standard->standard_id: null,
-                    ]);
-
-                    //Vendors in DB speichern
-                    if (array_key_exists('vendors', $category)) {
-                        foreach ($category['vendors'] as $vendor) {
-                            Vendor::create([
-                                'vendor' => $vendor['vendor'],
-                                'url' => $vendor['url'],
-                                'category_id' => $cat->category_id
-                            ]);
-                        }
-                    }
-                }
-
-                //necessary category checken & Insert into consense
-                if (!$necessary_category) {
-
-                    $standard = Standard::where('mapping', 'necessary')
-                        ->where('user_id', $user_id)
-                        ->first();
-
-                    Category::create([
-                        'site_id' => $site_id,
-                        'category' => $standard->standard,
-                    ], [
-                        'standard_id' => $standard->standard_id,
-                    ]);
+                $array = json_decode($result, true);
+                Log::info($array);
+                foreach ($array['cookies'] as $cookie) {
+                    $sql = sprintf("
+                        INSERT IGNORE 
+                        INTO cookies 
+                        VALUE (
+                           NULL, 
+                           '%s', 
+                           %d,
+                           %d,
+                           TIMESTAMP(NOW()), 
+                           TIMESTAMP(NOW())
+                    )",
+                        $cookie['cookie'],
+                        $site_id,
+                        isset($cookie['necessary'])? $cookie['necessary']? 1: 0: 0,
+                    );
+                    DB::insert($sql);
 
                 }
 
@@ -112,64 +80,32 @@ class ApiController extends Controller
                 $site->save();
             }
 
-            //Load categories for this site an init consent
-            $sql = sprintf("SELECT category_id
-                FROM categories
-                WHERE site_id = %d
-            ", $site_id);
-            $categories_loaded = DB::select($sql);
-            foreach ($categories_loaded as $category_loaded) {
-                $sql = sprintf("INSERT IGNORE INTO consents VALUE (NULL, %d, %d, NULL, TIMESTAMP(NOW()), TIMESTAMP(NOW()))", $user_id, $category_loaded->category_id);
-                DB::insert($sql);
-            }
-
-            //init consent
-            //Consent::create([
-            //    'user_id' => $user_id,
-            //    'category_id' => $cat->category_id
-            //]);
-
             //Log user_sites Last visit
-            Visit::updateOrCreate(
-                ['site_id' =>  $site_id],
-                ['user_id' => $user_id, 'updated_at' => now()]
+            Visit::updateOrCreate([
+                    'site_id' =>  $site_id
+                ], [
+                    'user_id' => $user_id,
+                    'updated_at' => now()
+                ]
             );
 
-            //load categories from site and save in consents
-//            $visit = Visit::where('site_id', $site_id)
-//                ->where('user_id', $user_id)
-//                ->first();
-//            if ($visit instanceof Visit && $visit->first) {
-//                $categories = Category::where('site_id', $site_id)->get('category_id');
-//                foreach ($categories as $category) {
-//                    Consent::updateOrCreate([
-//                       'user_id' => $user_id,
-//                       'category_id' => $category->category_id
-//                    ]);
-//                }
-//                $visit->first = 0;
-//                $visit->save();
-//            }
-
             //consenses auslesen und ausgeben
+            $cookies = [];
             $sql = sprintf("
-                SELECT category
+                SELECT *
                 FROM consents
-                JOIN categories USING (category_id)
-                LEFT JOIN standards USING (standard_id)
-                WHERE consents.user_id=%d
+                LEFT JOIN cookies USING (cookie_id)
+                WHERE user_id=%d
                 AND site_id=%d
-                AND COALESCE(consents.checked, standards.checked, 0)
-                ORDER BY standard_id DESC
             ",
                 $user_id,
                 $site_id
             );
-            foreach(DB::select($sql) as $category) {
-                $categories[] = $category->category;
+            foreach(DB::select($sql) as $cookie) {
+                $cookies[$cookie->cookie] = $cookie->checked;
             }
         }
 
-        return response()->json($categories);
+        return response()->json($cookies);
     }
 }

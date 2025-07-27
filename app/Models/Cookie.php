@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Account extends Model
+class Cookie extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'account_id';
+    protected $primaryKey = 'cookie_id';
     protected $fillable = [
-        'account',
+        'cookie',
+        'site_id',
+        'necessary',
     ];
 }

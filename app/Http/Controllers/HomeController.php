@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cookie;
+use App\Models\Site;
+use App\Models\User;
 use App\Models\Vendor;
 use App\Models\Category;
 use App\Models\Consent;
@@ -35,6 +38,40 @@ class HomeController extends Controller
             return redirect('/setup');
         }
 
+        $url = $request->get('url');
+
+        //defaults
+        $cookies = [];
+        $site_id = null;
+        $site = null;
+
+        if (!is_null($url)) {
+            $extracted_host = parse_url($url, PHP_URL_HOST);
+            $extracted_path = $url; //parse_url($url, PHP_URL_PATH);
+
+            //get or set Site
+
+            $site = Site::firstOrCreate([
+                'site' => $extracted_host,
+                'url' => $extracted_path
+            ], [
+                'not_loaded' => 1,
+            ]);
+            $site_id = $site->site_id;
+
+            //get cookies
+            $sql = sprintf("
+                SELECT cookie_id, cookie, necessary, checked
+                FROM cookies
+                LEFT JOIN consents USING (cookie_id)
+                WHERE site_id=%d
+            ",
+                $site_id,
+                Auth::user()->user_id
+            );
+            $cookies = DB::select($sql);
+        }
+
         $sql = sprintf("
             SELECT site_id, site
             FROM visits
@@ -44,11 +81,43 @@ class HomeController extends Controller
         ",
             Auth::user()->user_id
         );
+        $sites = DB::select($sql);
 
         return view('home', [
             'user' => Auth::user(),
-            'sites' => DB::select($sql),
+            'sites' => $sites,
+            'site' => $site,
+            'cookies' => $cookies,
         ]);
+    }
+
+    public function save(Request $request)
+    {
+        //dd($request->all());
+
+        $site_id = $request->input('site_id');
+        $consents = $request->input('consents', []);
+
+        $cookies = Cookie::where('site_id', $site_id)->get();
+        foreach ($cookies AS $cookie) {
+            Consent::updateOrCreate([
+                'user_id' => Auth::user()->user_id,
+                'cookie_id' => $cookie->cookie_id,
+            ], [
+                'checked' => $cookie->necessary? 1: 0,
+            ]);
+        }
+
+        foreach ($consents AS $consent) {
+            Consent::updateOrCreate([
+                'user_id' => Auth::user()->user_id,
+                'cookie_id' => $consent,
+            ], [
+                'checked' => 1,
+            ]);
+        }
+
+        return redirect('/');
     }
 
     public function export(Request $request)
@@ -154,5 +223,63 @@ class HomeController extends Controller
             }
         }
 
+    }
+
+    /**
+     * Save cookie consents for a site.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveConsent(Request $request)
+    {
+        $site_id = $request->input('site_id');
+        $cookies = $request->input('cookies', []);
+
+        Log::info($request->all());
+
+        Log::info('Saving consents for site: ' . $site_id);
+        Log::info('Cookies: ', $cookies);
+
+        // Get the site_id
+        //$siteModel = Site::where('site', $site)->first();
+        //$site_id = $siteModel->site_id;
+        Log::info('$site_id: ', $site_id);
+
+        if (!$siteModel) {
+            return redirect()->back()->with('error', 'Site not found');
+        }
+
+        $site_id = $siteModel->site_id;
+        Log::info('$site_id: ', $site_id);
+
+        // First, set all cookies for this site to unchecked
+        DB::table('consents')
+            ->join('cookies', 'consents.cookie_id', '=', 'cookies.cookie_id')
+            ->where('cookies.site_id', $site_id)
+            ->where('consents.user_id', Auth::user()->user_id)
+            ->update(['consents.checked' => 0]);
+
+        // Then, set the selected cookies to checked
+        foreach ($cookies as $cookie) {
+            $cookieModel = DB::table('cookies')
+                ->where('cookie', trim($cookie))
+                ->where('site_id', $site_id)
+                ->first();
+
+            if ($cookieModel) {
+                Consent::updateOrCreate(
+                    [
+                        'user_id' => Auth::user()->user_id,
+                        'cookie_id' => $cookieModel->cookie_id
+                    ],
+                    [
+                        'checked' => 1
+                    ]
+                );
+            }
+        }
+
+        return redirect()->back()->with('success', 'Cookie preferences saved successfully');
     }
 }

@@ -25,44 +25,107 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">{{ __("Hier werden alle Seiten, die du besucht hast und von OpenPIMS betreut werden, dargestellt.") }}</div>
-                    <div class="card-body">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Site</th>
-                                <th class="text-end">Anbieter</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($sites as $site)
+    @if(is_null($site))
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">{{ __("Hier werden alle Seiten, die du besucht hast und von OpenPIMS betreut werden, dargestellt.") }}</div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
                                 <tr>
-                                    <td>
-                                        {!! $site->site !!}
-                                    </td>
-                                    <td class="text-end">
-                                        <button
-                                            type="button"
-                                            class="btn btn-sm btn-secondary editClick"
-                                            id="{!! $site->site_id !!}"
-                                            data-site="{!! $site->site !!}"
-                                        >
-                                            Bearbeiten
-                                        </button>
-                                    </td>
+                                    <th>Site</th>
+                                    <th class="text-end">Anbieter</th>
                                 </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                @foreach($sites as $site)
+                                    <tr>
+                                        <td>
+                                            {!! $site->site !!}
+                                        </td>
+                                        <td class="text-end">
+                                            <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-secondary editClick"
+                                                    id="{!! $site->site_id !!}"
+                                                    data-site="{!! $site->site !!}"
+                                            >
+                                                Bearbeiten
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @else
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">{{ $site->site }}</div>
+                        <div class="card-body">
+                            <form method="post" action="/">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="site_id" value="{!! $site->site_id !!}">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Cookie</th>
+                                        <th class="text-end">
+                                            <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-primary"
+                                                    id="saveClickOrg"
+                                                    data-site_id="{!! $site->site !!}"
+                                            >
+                                                Save
+                                            </button>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($cookies as $cookie)
+                                        <tr>
+                                            <td>
+                                                {!! $cookie->cookie !!}
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="form-check form-switch d-flex justify-content-end">
+                                                    <input
+                                                        name="consents[]"
+                                                        value="{!! $cookie->cookie_id !!}"
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        role="switch"
+                                                        id="switchCheckCheckedDisabled"
+                                                        @if($cookie->necessary)
+                                                            checked
+                                                            disabled
+                                                        @else
+                                                            {!! $cookie->checked? 'checked': '' !!}
+                                                        @endif
+                                                    >
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <script type="module">
 
         $(".editClick").click(function () {
@@ -118,6 +181,7 @@
             $('#editModal').modal('show');
         });
 
+        /*
         $(document).on("click", ".form-check-input" , function() {
             var category_id = $(this).val();
             var standard = $(this).data('standard')? 1: 0;
@@ -125,6 +189,34 @@
             $.getJSON("/consent/" + standard + "/" + category_id , function (category) {
 
             });
+        });*/
+
+        $("#saveClick").click(function() {
+            //let site = $(this).data('site');
+            //console.log('save for site: ' + site);
+
+            // Collect all cookie consent data
+            let cookieData = [];
+            $("table .form-check-input:checked").each(function() {
+                cookieData.push($(this).closest('tr').find('td:first').text().trim());
+            });
+
+            // Submit the form with the collected data
+            let form = $("form[action='/consent/save']");
+
+            // Add hidden inputs for each cookie
+            //form.empty(); // Clear any existing inputs
+            //form.append('<input type="hidden" name="_token" value="' + $('meta[name="csrf-token"]').attr('content') + '">');
+            //form.append('<input type="hidden" name="site" value="' + site + '">');
+
+            for (let i = 0; i < cookieData.length; i++) {
+                form.append('<input type="hidden" name="cookies[]" value="' + cookieData[i] + '">');
+            }
+
+            console.log('Submitting form with cookies:', cookieData);
+
+            // Submit the form
+            form.submit();
         });
 
     </script>

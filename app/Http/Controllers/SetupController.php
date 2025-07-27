@@ -72,6 +72,7 @@ class SetupController extends Controller
         //}
 
         //Lese die Standard-Kategorien aus
+        /*
         $sql = sprintf("SELECT
                 standard_id AS category_id,
                 standard AS category,
@@ -85,7 +86,9 @@ class SetupController extends Controller
         $categories = DB::select($sql);
         foreach ($categories AS $id => $category) {
             $categories[$id]->suppliers = [];
-        }
+        }*/
+
+        $categories = [];
 
         return view('setup', [
             'user' => Auth::user(),

@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('vendors');
-        Schema::create('vendors', function (Blueprint $table) {
-            $table->integerIncrements('vendor_id');
-            $table->string('vendor');
-            $table->string('url');
-            $table->integer('category_id')->unsigned()->index();
+        Schema::dropIfExists('cookies');
+        Schema::create('cookies', function (Blueprint $table) {
+            $table->integerIncrements('cookie_id');
+            $table->string('cookie');
+            $table->unsignedInteger('site_id');
+            $table->unique(['cookie', 'site_id'], 'unique');
+            $table->boolean('necessary')->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vendors');
+        Schema::dropIfExists('cookies');
     }
 };

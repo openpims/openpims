@@ -1,0 +1,15 @@
+{
+  "site": "Demo",
+  "cookies": [
+    {
+      "cookie": "functional",
+      "necessary": true
+    },
+    {
+      "cookie": "analytics"
+    },
+    {
+      "cookie": "test"
+    }
+  ]
+}
