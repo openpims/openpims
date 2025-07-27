@@ -35,7 +35,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         if (Auth::user()->setup) {
-            return redirect('/setup');
+            //return redirect('/setup');
         }
 
         $url = $request->get('url');
