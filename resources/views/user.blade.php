@@ -14,7 +14,8 @@
                             <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Site</th>
+                                <th>Email</th>
+                                <th>Verified</th>
                                 <th class="text-end">Action</th>
                             </tr>
                             </thead>
@@ -26,6 +27,9 @@
                                     </td>
                                     <td>
                                         {!! $user->email !!}
+                                    </td>
+                                    <td>
+                                        {{ $user->email_verified_at ? 'Yes' : 'No' }}
                                     </td>
                                     <td class="text-end">
 
