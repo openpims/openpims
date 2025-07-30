@@ -206,6 +206,7 @@
                     <div class="card-header">
                         <font size="18px">3.</font>
                         Logge dich in der Extension ein mit deinen openPIMS Benutzerdaten.
+                    </div>
                     <div class="card-body text-in">
                         <center><img src="/login.png" height="300" border="1"></center>
                     </div>
