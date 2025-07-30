@@ -15,13 +15,17 @@ use Illuminate\Http\Request;
 Route::group([
     'domain' => App::environment('local') ? 'openpims.test' : env('APP_DOMAIN')
 ], function () {
-    //Route::get('/', function () {
-    //    return view('index');
-    //});
-    Route::get('/', [HomeController::class, 'index'])->name('index')->middleware(['auth', 'verified']);
+    Route::get('/', function (Request $request) {
+        if (Auth::check()) {
+            // Create a new instance of HomeController without middleware
+            $controller = new HomeController();
+            return $controller->index($request);
+        }
+        return view('index');
+    })->name('index');
     Route::post('/', [HomeController::class, 'save'])->name('save')->middleware(['auth', 'verified']);
-    Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
-    Auth::routes(['register' => false, 'login' => true, 'reset' => false, 'verify' => false]);
+    //Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
+    Auth::routes(['register' => true, 'login' => true, 'reset' => false, 'verify' => false]);
     Route::resource('site', SiteController::class)->middleware(['auth', 'verified']);
     Route::get('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
     Route::post('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);

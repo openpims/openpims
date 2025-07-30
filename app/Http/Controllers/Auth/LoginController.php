@@ -37,4 +37,18 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    /**
+     * Get the post login redirect path.
+     *
+     * @return string
+     */
+    protected function redirectTo()
+    {
+        if (request()->has('url')) {
+            return '/?url=' . request()->input('url');
+        }
+
+        return RouteServiceProvider::HOME;
+    }
 }

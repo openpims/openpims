@@ -85,7 +85,7 @@
                                                     id="saveClickOrg"
                                                     data-site_id="{!! $site->site !!}"
                                             >
-                                                Save
+                                                Save und zurück zur Webseite
                                             </button>
                                         </th>
                                     </tr>

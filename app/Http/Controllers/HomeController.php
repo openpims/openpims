@@ -117,6 +117,16 @@ class HomeController extends Controller
             ]);
         }
 
+        // Get the site information
+        $site = Site::find($site_id);
+        if ($site && $site->url) {
+            // Extract the host part of the URL
+            $host = parse_url($site->url, PHP_URL_SCHEME) . '://' . parse_url($site->url, PHP_URL_HOST);
+            if (!empty($host)) {
+                return redirect($host);
+            }
+        }
+
         return redirect('/');
     }
 
@@ -241,17 +251,8 @@ class HomeController extends Controller
         Log::info('Saving consents for site: ' . $site_id);
         Log::info('Cookies: ', $cookies);
 
-        // Get the site_id
-        //$siteModel = Site::where('site', $site)->first();
-        //$site_id = $siteModel->site_id;
-        Log::info('$site_id: ', $site_id);
-
-        if (!$siteModel) {
-            return redirect()->back()->with('error', 'Site not found');
-        }
-
-        $site_id = $siteModel->site_id;
-        Log::info('$site_id: ', $site_id);
+        // Log the site_id
+        Log::info('$site_id: ', [$site_id]);
 
         // First, set all cookies for this site to unchecked
         DB::table('consents')

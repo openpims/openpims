@@ -16,6 +16,9 @@
 
     <link rel="icon" href="/favicon.png" type="image/png">
 
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
 </head>
 <body>
     <div id="app">
@@ -27,7 +30,7 @@
                         {{ config('app.name', 'openPIMS') }}
                     </a>
                 @else
-                    <a class="navbar-brand" href="{{ url('/home') }}">
+                    <a class="navbar-brand" href="{{ url('/') }}">
                         <img src="/openpims.png" width="32" height="32" class="d-inline-block align-top" alt="">
                         {{ config('app.name', 'openPIMS') }}
                     </a>
@@ -48,29 +51,29 @@
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
-                                <li class="nav-item">
+                                <!--li class="nav-item">
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
+                                </li-->
                             @endif
-
+x
                             @if (Route::has('register'))
-                                <li class="nav-item">
+                                <!--li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
+                                </li-->
                             @endif
                         @else
 
                             <li class="nav-item">
-                                <a class="nav-link" href="/home">Home</a>
+                                <a class="nav-link" href="/">Home</a>
                             </li>
 
                             <li class="nav-item">
                                 <a class="nav-link" href="/export">Export</a>
                             </li>
 
-                            <li class="nav-item">
+                            <!--li class="nav-item">
                                 <a class="nav-link" href="/setup">Setup</a>
-                            </li>
+                            </li-->
 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

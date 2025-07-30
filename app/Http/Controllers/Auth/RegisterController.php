@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -42,6 +43,20 @@ class RegisterController extends Controller
     }
 
     /**
+     * Get the post registration redirect path.
+     *
+     * @return string
+     */
+    protected function redirectTo()
+    {
+        if (request()->has('url')) {
+            return '/?url=' . request()->input('url');
+        }
+
+        return RouteServiceProvider::HOME;
+    }
+
+    /**
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
@@ -52,6 +67,17 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'cf-turnstile-response' => ['required', function ($attribute, $value, $fail) {
+                $response = Http::asForm()->post(config('turnstile.verify_url'), [
+                    'secret' => config('turnstile.secret_key'),
+                    'response' => $value,
+                    'remoteip' => request()->ip(),
+                ]);
+
+                if (!$response->json('success')) {
+                    $fail('The Cloudflare Turnstile verification failed. Please try again.');
+                }
+            }],
         ]);
     }
 
