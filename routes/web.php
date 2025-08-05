@@ -9,6 +9,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\Auth\MagicLinkController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use Illuminate\Http\Request;
 
 
@@ -25,7 +27,21 @@ Route::group([
     })->name('index');
     Route::post('/', [HomeController::class, 'save'])->name('save')->middleware(['auth', 'verified']);
     //Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
-    Auth::routes(['register' => true, 'login' => true, 'reset' => false, 'verify' => true]);
+    // Custom magic link authentication routes
+    Route::post('/register', [MagicLinkController::class, 'sendMagicLink'])->name('register');
+    Route::post('/login', [MagicLinkController::class, 'sendMagicLink'])->name('login');
+    Route::get('/auth/set-password/{user}', [MagicLinkController::class, 'showSetPasswordForm'])->name('auth.set-password');
+    Route::post('/auth/set-password/{user}', [MagicLinkController::class, 'setPassword']);
+    Route::get('/auth/magic-login/{user}', [MagicLinkController::class, 'magicLogin'])->name('auth.magic-login');
+
+    // Keep logout route from Laravel auth
+    Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
+    // Password reset routes
+    Route::get('/password/reset', [PasswordResetController::class, 'showResetRequestForm'])->name('password.request');
+    Route::post('/password/email', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/password/reset/{user}', [PasswordResetController::class, 'showResetForm'])->name('password.reset.form');
+    Route::post('/password/reset/{user}', [PasswordResetController::class, 'resetPassword'])->name('password.update');
     Route::resource('site', SiteController::class)->middleware(['auth', 'verified']);
     Route::get('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
     Route::post('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);

@@ -66,18 +66,6 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'cf-turnstile-response' => ['required', function ($attribute, $value, $fail) {
-                $response = Http::asForm()->post(config('turnstile.verify_url'), [
-                    'secret' => config('turnstile.secret_key'),
-                    'response' => $value,
-                    'remoteip' => request()->ip(),
-                ]);
-
-                if (!$response->json('success')) {
-                    $fail('The Cloudflare Turnstile verification failed. Please try again.');
-                }
-            }],
         ]);
     }
 
@@ -91,7 +79,7 @@ class RegisterController extends Controller
     {
         return User::create([
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => null, // Password will be set after email verification
         ]);
     }
 }

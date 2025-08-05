@@ -16,8 +16,6 @@
 
     <link rel="icon" href="/favicon.png" type="image/png">
 
-    <!-- Cloudflare Turnstile -->
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 </head>
 <body>

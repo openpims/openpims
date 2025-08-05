@@ -4,8 +4,10 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Reset Password') }}</div>
+            <div class="card" style="border-color: orange;">
+                <div class="card-header" style="background-color: #ffa64d; color: white;">
+                    <h4 class="mb-0">{{ __('Passwort vergessen') }}</h4>
+                </div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -14,11 +16,13 @@
                         </div>
                     @endif
 
+                    <p class="mb-4">Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.</p>
+
                     <form method="POST" action="{{ route('password.email') }}">
                         @csrf
 
                         <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('E-Mail-Adresse') }}</label>
 
                             <div class="col-md-6">
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
@@ -33,9 +37,13 @@
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Send Password Reset Link') }}
+                                <button type="submit" class="btn btn-warning" style="background-color: #ffa64d;">
+                                    {{ __('Passwort-Reset-Link senden') }}
                                 </button>
+
+                                <a class="btn btn-link" href="{{ url('/') }}">
+                                    {{ __('Zurück zur Anmeldung') }}
+                                </a>
                             </div>
                         </div>
                     </form>

@@ -6,17 +6,25 @@
         <div class="col-md-8">
             <div class="card" style="border-color: orange;">
                 <div class="card-header" style="background-color: #ffa64d; color: white;">
-                    <h4 class="mb-0">{{ __('Neues Passwort setzen') }}</h4>
+                    <h4 class="mb-0">{{ __('Passwort setzen') }}</h4>
                 </div>
 
                 <div class="card-body">
-                    <p class="mb-4">Setzen Sie ein neues, sicheres Passwort für Ihr OpenPIMS-Konto.</p>
+                    <p class="mb-4">Willkommen bei OpenPIMS! Bitte setzen Sie ein sicheres Passwort für Ihr Konto.</p>
 
                     <form method="POST" action="{{ request()->url() }}">
                         @csrf
 
+                        <!-- Preserve signature validation parameters -->
+                        @if(request()->has('expires'))
+                            <input type="hidden" name="expires" value="{{ request()->get('expires') }}">
+                        @endif
+                        @if(request()->has('signature'))
+                            <input type="hidden" name="signature" value="{{ request()->get('signature') }}">
+                        @endif
+
                         <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Neues Passwort') }}</label>
+                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Passwort') }}</label>
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
@@ -40,7 +48,7 @@
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-warning" style="background-color: #ffa64d;">
-                                    {{ __('Passwort zurücksetzen') }}
+                                    {{ __('Passwort setzen') }}
                                 </button>
                             </div>
                         </div>
@@ -50,8 +58,12 @@
 
             <div class="card mt-4" style="border-color: orange;">
                 <div class="card-body">
-                    <h5 style="color: #ffa64d;">Hinweis</h5>
-                    <p>Nach dem Zurücksetzen Ihres Passworts können Sie sich mit Ihrer E-Mail-Adresse anmelden. Sie erhalten dann einen Login-Link per E-Mail.</p>
+                    <h5 style="color: #ffa64d;">Was passiert als nächstes?</h5>
+                    <ul>
+                        <li>Nach dem Setzen Ihres Passworts werden Sie automatisch angemeldet</li>
+                        <li>Sie erhalten eine E-Mail mit Anweisungen zur Installation der Browser-Erweiterung</li>
+                        <li>Ihr persönlicher Token wird in der E-Mail enthalten sein</li>
+                    </ul>
                 </div>
             </div>
         </div>

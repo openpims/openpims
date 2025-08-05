@@ -18,6 +18,14 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $primaryKey = 'user_id';
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'user_id';
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -56,19 +64,6 @@ class User extends Authenticatable implements MustVerifyEmail
         {
             $user->token = Str::lower(Str::random(8));
             $user->save();
-
-            /*
-            $standards = Standard::where('user_id', null)->get();
-            foreach ($standards as $standard) {
-                Standard::create([
-                    'standard' => $standard->standard,
-                    'description' => $standard->description,
-                    'mapping' => $standard->mapping,
-                    'checked' => $standard->checked,
-                    'disabled' => $standard->disabled,
-                    'user_id' => $user->user_id,
-                ]);
-            }*/
         });
     }
 }
