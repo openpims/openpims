@@ -45,9 +45,10 @@ class ApiController extends Controller
                         $user->user_id,
                         $site->site_id
                     );
-                    foreach (DB::select($sql) as $cookie) {
-                        $cookies[$cookie->cookie] = $cookie->checked;
-                    }
+                    $cookies = DB::select($sql);
+                    //foreach (DB::select($sql) as $cookie) {
+                        //$cookies[$cookie->cookie] = $cookie->checked;
+                    //}
 
                     //Log user_sites Last visit
                     Visit::updateOrCreate([
@@ -60,6 +61,6 @@ class ApiController extends Controller
             }
         }
 
-        return response()->json(DB::select($sql));
+        return response()->json($cookies);
     }
 }
