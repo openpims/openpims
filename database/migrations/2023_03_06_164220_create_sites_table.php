@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('site', 64);
             $table->string('url');
             $table->unique(['site', 'url'], 'unique');
-            $table->boolean('not_loaded')->default(1);
+            //$table->boolean('not_loaded')->default(1);
             $table->timestamps();
         });
     }

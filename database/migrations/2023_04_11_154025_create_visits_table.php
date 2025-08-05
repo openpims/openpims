@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integerIncrements('visit_id');
             $table->integer('user_id')->unsigned();
             $table->integer('site_id')->unsigned()->unique();
-            $table->boolean('first')->default(1);
+            //$table->boolean('first')->default(1);
             $table->timestamps();
         });
     }
