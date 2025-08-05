@@ -31,7 +31,7 @@
                         <h1>{{ __("OpenPIMS: (Fast) keine Cookie-Banner mehr") }}</h1>
                     </div>
                     <div class="card-body">
-                        OpenPIMS erlaubt die zentrale Verwaltung von Cookie-Bannern für alle Ihre Websites,
+                        OpenPIMS erlaubt die zentrale Verwaltung von Cookie-Bannern für alle Deine Websites,
                         reduziert Zeit- und Kostenaufwand durch automatisierte Einstellungen, garantiert ein
                         konsistentes Nutzererlebnis und erfüllt dank seiner
                         <a href="https://github.com/openpims" target="_blank">Open Source-Basis</a> die im
