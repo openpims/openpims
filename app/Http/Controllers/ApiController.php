@@ -60,6 +60,6 @@ class ApiController extends Controller
             }
         }
 
-        return response()->json($cookies);
+        return response()->json((array)$cookies);
     }
 }
