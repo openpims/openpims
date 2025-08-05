@@ -2,8 +2,74 @@
 
 @section('content')
 
-    <div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
+    @if($show_site)
+    <div id="createModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form method="post" action="/">
+                    @csrf
+                    <input type="hidden" name="site_id" value="{!! $site->site_id !!}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="site">{!! $site->site !!}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Cookie</th>
+                                <th class="text-end">
+                                    <button
+                                            type="submit"
+                                            class="btn btn-sm btn-primary"
+                                            id="saveClickOrg"
+                                            data-site_id="{!! $site->site !!}"
+                                    >
+                                        Save und zurück zur Webseite
+                                    </button>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($cookies as $cookie)
+                                <tr>
+                                    <td>
+                                        {!! $cookie->cookie !!}
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="form-check form-switch d-flex justify-content-end">
+                                            <input
+                                                    name="consents[]"
+                                                    value="{!! $cookie->cookie_id !!}"
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    id="switchCheckCheckedDisabled"
+                                                    @if($cookie->necessary)
+                                                        checked
+                                                    disabled
+                                            @else
+                                                {!! $cookie->checked? 'checked': '' !!}
+                                                    @endif
+                                            >
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Site</button>
+                    </div-->
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form id="editForm" method="post">
@@ -25,7 +91,7 @@
         </div>
     </div>
 
-    @if(is_null($site))
+    @if(true)
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-12">
@@ -126,8 +192,17 @@
         </div>
     @endif
 
-    <script type="module">
+@endsection
 
+@section('script')
+<script>
+    $(document).ready(function() {
+        // Show modal if site is set
+        @if($show_site)
+            $('#createModal').modal('show');
+        @endif
+
+        // Handle edit button clicks
         $(".editClick").click(function () {
             let site_id = $(this).attr('id');
             let site = $(this).data('site');
@@ -191,6 +266,7 @@
             });
         });*/
 
+        // Handle save button clicks
         $("#saveClick").click(function() {
             //let site = $(this).data('site');
             //console.log('save for site: ' + site);
@@ -218,6 +294,6 @@
             // Submit the form
             form.submit();
         });
-
-    </script>
+    });
+</script>
 @endsection

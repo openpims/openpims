@@ -4,16 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Cookie;
 use App\Models\Site;
-use App\Models\User;
 use App\Models\Vendor;
-use App\Models\Category;
 use App\Models\Consent;
 use App\Models\Standard;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redirect;
 
 class HomeController extends Controller
 {
@@ -34,44 +32,41 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        if (Auth::user()->setup) {
-            //return redirect('/setup');
+        //check for correct site or create one
+        $site = null;
+        $url = $request->get('url');
+        if ($url) {
+            $url = trim($url);
+            $site = Site::where('url', $url)->first();
+            if (!$site instanceof Site) {
+                $site = $this->saveSite($url);
+            }
         }
 
-        $url = $request->get('url');
-
-        //defaults
+        //Load cookies
         $cookies = [];
-        $site_id = null;
-        $site = null;
-
-        if (!is_null($url)) {
-            $extracted_host = parse_url($url, PHP_URL_HOST);
-            $extracted_path = $url; //parse_url($url, PHP_URL_PATH);
-
-            //get or set Site
-
-            $site = Site::firstOrCreate([
-                'site' => $extracted_host,
-                'url' => $extracted_path
-            ], [
-                'not_loaded' => 1,
-            ]);
-            $site_id = $site->site_id;
-
-            //get cookies
+        if ($site instanceof Site) {
             $sql = sprintf("
                 SELECT cookie_id, cookie, necessary, checked
                 FROM cookies
                 LEFT JOIN consents USING (cookie_id)
                 WHERE site_id=%d
             ",
-                $site_id,
+                $site->site_id,
                 Auth::user()->user_id
             );
             $cookies = DB::select($sql);
+
+            //Log user_sites Last visit
+            Visit::updateOrCreate([
+                'site_id' => $site->site_id
+            ], [
+                'user_id' => Auth::user()->user_id,
+                'updated_at' => now(),
+            ]);
         }
 
+        //load all visited sites
         $sql = sprintf("
             SELECT site_id, site
             FROM visits
@@ -88,12 +83,57 @@ class HomeController extends Controller
             'sites' => $sites,
             'site' => $site,
             'cookies' => $cookies,
+            'url' => $url,
+            'show_site' => !is_null($url) && $site instanceof Site,
         ]);
+    }
+
+    private function saveSite(string $url)
+    {
+        //load categories and parse url
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15") );
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $result= curl_exec ($ch);
+        curl_close ($ch);
+        $array = json_decode($result, true);
+        Log::info($array);
+
+        $site = Site::firstOrCreate([
+            'site' => $array['site'],
+            'url' => $url,
+        ]);
+        $site_id = $site->site_id;
+
+        foreach ($array['cookies'] as $cookie) {
+            $sql = sprintf("
+                INSERT IGNORE 
+                INTO cookies 
+                VALUE (
+                   NULL, 
+                   '%s', 
+                   %d,
+                   %d,
+                   TIMESTAMP(NOW()), 
+                   TIMESTAMP(NOW())
+            )",
+                $cookie['cookie'],
+                $site_id,
+                isset($cookie['necessary']) ? $cookie['necessary'] ? 1 : 0 : 0,
+            );
+            DB::insert($sql);
+        }
+
+        return $site;
     }
 
     public function save(Request $request)
     {
-        //dd($request->all());
+        #dd($request->all());
 
         $site_id = $request->input('site_id');
         $consents = $request->input('consents', []);
@@ -120,9 +160,19 @@ class HomeController extends Controller
         // Get the site information
         $site = Site::find($site_id);
         if ($site && $site->url) {
-            // Extract the host part of the URL
-            $host = parse_url($site->url, PHP_URL_SCHEME) . '://' . parse_url($site->url, PHP_URL_HOST);
-            if (!empty($host)) {
+            // Extract the host part of the URL with proper error handling
+            $parsedUrl = parse_url($site->url);
+
+            if ($parsedUrl && isset($parsedUrl['scheme']) && isset($parsedUrl['host'])) {
+                $host = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+
+                // Add port if it exists and is not default
+                if (isset($parsedUrl['port']) && 
+                    !(($parsedUrl['scheme'] === 'http' && $parsedUrl['port'] === 80) || 
+                      ($parsedUrl['scheme'] === 'https' && $parsedUrl['port'] === 443))) {
+                    $host .= ':' . $parsedUrl['port'];
+                }
+
                 return redirect($host);
             }
         }
