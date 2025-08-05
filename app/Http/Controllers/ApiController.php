@@ -60,6 +60,6 @@ class ApiController extends Controller
             }
         }
 
-        return response()->json((array)$cookies);
+        return response()->json(DB::select($sql));
     }
 }
