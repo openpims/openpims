@@ -25,7 +25,7 @@ Route::group([
     })->name('index');
     Route::post('/', [HomeController::class, 'save'])->name('save')->middleware(['auth', 'verified']);
     //Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
-    Auth::routes(['register' => true, 'login' => true, 'reset' => false, 'verify' => false]);
+    Auth::routes(['register' => true, 'login' => true, 'reset' => false, 'verify' => true]);
     Route::resource('site', SiteController::class)->middleware(['auth', 'verified']);
     Route::get('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
     Route::post('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
