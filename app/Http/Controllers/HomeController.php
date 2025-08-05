@@ -78,6 +78,31 @@ class HomeController extends Controller
         );
         $sites = DB::select($sql);
 
+        //check for necessary extension and correct setup
+        $host = str_replace([
+            'http://',
+            'https://'
+        ], [
+            'http://'.Auth::user()->token.'.',
+            'https://'.Auth::user()->token.'.'
+        ], env('APP_URL'));
+
+        $extension_installed = false;
+        $valid_url = false;
+        $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+        if(array_key_exists('x-openpims', $headers)) {
+
+            //extension installiert
+            $extension_installed = true;
+
+            //url vergleichen
+            if ($headers['x-openpims'] == $host) {
+                $valid_url = true;
+            }
+        }
+
+        $setup_unfinished = !($extension_installed && $valid_url);
+
         return view('home', [
             'user' => Auth::user(),
             'sites' => $sites,
@@ -85,6 +110,10 @@ class HomeController extends Controller
             'cookies' => $cookies,
             'url' => $url,
             'show_site' => !is_null($url) && $site instanceof Site,
+            'extension_installed' => $extension_installed,
+            'valid_url' => $valid_url,
+            'setup_unfinished' => $setup_unfinished,
+            'host' => $host,
         ]);
     }
 

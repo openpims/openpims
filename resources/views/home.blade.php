@@ -2,6 +2,91 @@
 
 @section('content')
 
+    @if($setup_unfinished)
+        <div id="setupModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <form method="post" action="/">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="site">Setup noch nicht abgeschlossen</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card mb-3" style="border-color: orange;">
+                                <div class="card-header">
+                                    <font size="18px">1.</font>
+                                    Registriere dich oder logge dich ein.
+                                    <span style="color: green; font-size: 48px; font-weight: bold; float: right;">✓</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="container text-center">
+                                            {!! $host !!}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3" style="border-color: orange;">
+                                <div class="card-header">
+                                    <font size="18px">2.</font>
+                                    Installiere die passende Browser-Erweiterung für dich.
+                                    @if($extension_installed)
+                                        <span style="color: green; font-size: 48px; font-weight: bold; float: right;">✓</span>
+                                    @else
+                                        <span style="color: red; font-size: 48px; font-weight: bold; float: right;">✗</span>
+                                    @endif
+                                </div>
+                                <div class="card-body text-in">
+                                    <div class="container text-center">
+                                        <div class="row">
+                                            <div class="col">
+                                                <a href="https://chromewebstore.google.com/detail/openpims/pgffgdajiokgdighlhahihihkgphlcnc" target="_blank">
+                                                    <img src="/browser-logos/chrome/chrome_64x64.png">
+                                                </a>
+                                                <p>Chrome</p>
+                                            </div>
+                                            <div class="col">
+                                                <img src="/browser-logos/safari/safari_64x64.png">
+                                                <p>Safari<br>(coming soon)</p>
+                                            </div>
+                                            <div class="col">
+                                                <img src="/browser-logos/firefox/firefox_64x64.png">
+                                                <p>Firefox<br>(coming soon)</p>
+                                            </div>
+                                            <div class="col">
+                                                <img src="/browser-logos/edge/edge_64x64.png">
+                                                <p>Edge<br>(coming soon)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card mb-3" style="border-color: orange;">
+                                <div class="card-header">
+                                    <font size="18px">3.</font>
+                                    Logge dich in der Extension ein mit deinen openPIMS Benutzerdaten.
+                                    @if($valid_url)
+                                        <span style="color: green; font-size: 48px; font-weight: bold; float: right;">✓</span>
+                                    @else
+                                        <span style="color: red; font-size: 48px; font-weight: bold; float: right;">✗</span>
+                                    @endif
+                                </div>
+                                <div class="card-body text-in">
+                                    <center><img src="/login.png" height="300" border="1"></center>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <!--button type="submit" class="btn btn-primary">Create Site</button-->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    @endif
+
     @if($show_site)
     <div id="createModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -200,6 +285,10 @@
         // Show modal if site is set
         @if($show_site)
             $('#createModal').modal('show');
+        @endif
+
+        @if($setup_unfinished)
+        $   ('#setupModal').modal('show');
         @endif
 
         // Handle edit button clicks
