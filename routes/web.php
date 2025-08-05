@@ -37,6 +37,19 @@ Route::group([
     // Keep logout route from Laravel auth
     Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
+    // Email verification routes
+    Route::get('/email/verify', function () {
+        return view('auth.verify');
+    })->middleware('auth')->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\VerificationController::class, 'verify'])
+        ->middleware(['auth', 'signed'])
+        ->name('verification.verify');
+
+    Route::post('/email/resend', [App\Http\Controllers\Auth\VerificationController::class, 'resend'])
+        ->middleware(['auth', 'throttle:6,1'])
+        ->name('verification.resend');
+
     // Password reset routes
     Route::get('/password/reset', [PasswordResetController::class, 'showResetRequestForm'])->name('password.request');
     Route::post('/password/email', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
