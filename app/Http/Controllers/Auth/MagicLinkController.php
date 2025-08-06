@@ -25,6 +25,7 @@ class MagicLinkController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
+        $url = $request->input('url');
 
         if (!$user) {
             // Create new user for registration
@@ -34,12 +35,12 @@ class MagicLinkController extends Controller
             ]);
 
             // Send registration magic link
-            $this->sendRegistrationMagicLink($user);
+            $this->sendRegistrationMagicLink($user, $url);
 
             return back()->with('status', 'Registrierung erfolgreich! Bitte überprüfen Sie Ihre E-Mails und klicken Sie auf den Link, um Ihr Passwort zu setzen.');
         } else {
             // Send login magic link
-            $this->sendLoginMagicLink($user);
+            $this->sendLoginMagicLink($user, $url);
 
             return back()->with('status', 'Ein Login-Link wurde an Ihre E-Mail-Adresse gesendet.');
         }
@@ -48,12 +49,17 @@ class MagicLinkController extends Controller
     /**
      * Send registration magic link
      */
-    private function sendRegistrationMagicLink(User $user)
+    private function sendRegistrationMagicLink(User $user, $originalUrl = null)
     {
+        $parameters = ['user' => $user->user_id];
+        if ($originalUrl) {
+            $parameters['url'] = $originalUrl;
+        }
+
         $url = URL::temporarySignedRoute(
             'auth.set-password',
             now()->addMinutes(120), // Extended to 2 hours
-            ['user' => $user->user_id]
+            $parameters
         );
 
         // Send email with magic link for password setting
@@ -66,12 +72,17 @@ class MagicLinkController extends Controller
     /**
      * Send login magic link
      */
-    private function sendLoginMagicLink(User $user)
+    private function sendLoginMagicLink(User $user, $originalUrl = null)
     {
+        $parameters = ['user' => $user->user_id];
+        if ($originalUrl) {
+            $parameters['url'] = $originalUrl;
+        }
+
         $url = URL::temporarySignedRoute(
             'auth.magic-login',
             now()->addMinutes(120), // Extended to 2 hours
-            ['user' => $user->user_id]
+            $parameters
         );
 
         // Send email with magic link for login
@@ -99,11 +110,17 @@ class MagicLinkController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            return redirect('/')
+            $redirectUrl = '/';
+            if ($request->query('url')) {
+                $redirectUrl .= '?url=' . urlencode($request->query('url'));
+            }
+
+            return redirect($redirectUrl)
                 ->with('error', 'Der Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen Link an, indem Sie sich erneut registrieren oder anmelden.');
         }
 
-        return view('auth.set-password', compact('user'));
+        $originalUrl = $request->query('url');
+        return view('auth.set-password', compact('user', 'originalUrl'));
     }
 
     /**
@@ -140,7 +157,13 @@ class MagicLinkController extends Controller
                 'validation_url' => $validationRequest->fullUrl(),
             ]);
 
-            return redirect('/')
+            $redirectUrl = '/';
+            $originalUrl = $request->input('url') ?: $request->query('url');
+            if ($originalUrl) {
+                $redirectUrl .= '?url=' . urlencode($originalUrl);
+            }
+
+            return redirect($redirectUrl)
                 ->with('error', 'Der Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen Link an, indem Sie sich erneut registrieren oder anmelden.');
         }
 
@@ -158,7 +181,13 @@ class MagicLinkController extends Controller
         // Send welcome email with token instructions
         $this->sendWelcomeEmail($user);
 
-        return redirect('/')->with('status', 'Ihr Passwort wurde erfolgreich gesetzt und Sie sind jetzt angemeldet!');
+        $redirectUrl = '/';
+        $originalUrl = $request->input('url') ?: $request->query('url');
+        if ($originalUrl) {
+            $redirectUrl .= '?url=' . urlencode($originalUrl);
+        }
+
+        return redirect($redirectUrl)->with('status', 'Ihr Passwort wurde erfolgreich gesetzt und Sie sind jetzt angemeldet!');
     }
 
     /**
@@ -179,13 +208,23 @@ class MagicLinkController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            return redirect('/')
+            $redirectUrl = '/';
+            if ($request->query('url')) {
+                $redirectUrl .= '?url=' . urlencode($request->query('url'));
+            }
+
+            return redirect($redirectUrl)
                 ->with('error', 'Der Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen Link an, indem Sie sich erneut registrieren oder anmelden.');
         }
 
         Auth::login($user);
 
-        return redirect('/')->with('status', 'Sie wurden erfolgreich angemeldet!');
+        $redirectUrl = '/';
+        if ($request->query('url')) {
+            $redirectUrl .= '?url=' . urlencode($request->query('url'));
+        }
+
+        return redirect($redirectUrl)->with('status', 'Sie wurden erfolgreich angemeldet!');
     }
 
     /**

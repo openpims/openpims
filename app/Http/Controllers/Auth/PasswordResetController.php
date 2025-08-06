@@ -15,9 +15,10 @@ class PasswordResetController extends Controller
     /**
      * Show the password reset request form
      */
-    public function showResetRequestForm()
+    public function showResetRequestForm(Request $request)
     {
-        return view('auth.passwords.email');
+        $originalUrl = $request->query('url');
+        return view('auth.passwords.email', compact('originalUrl'));
     }
 
     /**
@@ -35,10 +36,16 @@ class PasswordResetController extends Controller
             return back()->withErrors(['email' => 'Diese E-Mail-Adresse ist nicht registriert.']);
         }
 
+        $parameters = ['user' => $user->user_id];
+        $originalUrl = $request->input('url');
+        if ($originalUrl) {
+            $parameters['url'] = $originalUrl;
+        }
+
         $url = URL::temporarySignedRoute(
             'password.reset.form',
             now()->addMinutes(60),
-            ['user' => $user->user_id]
+            $parameters
         );
 
         // Send password reset email
@@ -59,7 +66,8 @@ class PasswordResetController extends Controller
             abort(401, 'Ungültiger oder abgelaufener Link.');
         }
 
-        return view('auth.passwords.reset', compact('user'));
+        $originalUrl = $request->query('url');
+        return view('auth.passwords.reset', compact('user', 'originalUrl'));
     }
 
     /**
@@ -79,6 +87,12 @@ class PasswordResetController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect('/')->with('status', 'Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich jetzt anmelden.');
+        $redirectUrl = '/';
+        $originalUrl = $request->input('url') ?: $request->query('url');
+        if ($originalUrl) {
+            $redirectUrl .= '?url=' . urlencode($originalUrl);
+        }
+
+        return redirect($redirectUrl)->with('status', 'Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich jetzt anmelden.');
     }
 }

@@ -22,6 +22,9 @@
                         @if(request()->has('signature'))
                             <input type="hidden" name="signature" value="{{ request()->get('signature') }}">
                         @endif
+                        @if(isset($originalUrl) && $originalUrl)
+                            <input type="hidden" name="url" value="{{ $originalUrl }}">
+                        @endif
 
                         <div class="row mb-3">
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Passwort') }}</label>

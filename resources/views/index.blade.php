@@ -85,7 +85,7 @@
                                             Weiter
                                         </button>
 
-                                        <a class="btn btn-link" href="{{ route('password.request') }}">
+                                        <a class="btn btn-link" href="{{ route('password.request') }}{{ request()->get('url') ? '?url=' . urlencode(request()->get('url')) : '' }}">
                                             {{ __('Passwort vergessen?') }}
                                         </a>
                                     </div>

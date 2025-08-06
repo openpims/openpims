@@ -20,6 +20,9 @@
 
                     <form method="POST" action="{{ route('password.email') }}">
                         @csrf
+                        @if(isset($originalUrl) && $originalUrl)
+                            <input type="hidden" name="url" value="{{ $originalUrl }}">
+                        @endif
 
                         <div class="row mb-3">
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('E-Mail-Adresse') }}</label>
@@ -41,7 +44,7 @@
                                     {{ __('Passwort-Reset-Link senden') }}
                                 </button>
 
-                                <a class="btn btn-link" href="{{ url('/') }}">
+                                <a class="btn btn-link" href="{{ url('/') }}{{ isset($originalUrl) && $originalUrl ? '?url=' . urlencode($originalUrl) : '' }}">
                                     {{ __('Zurück zur Anmeldung') }}
                                 </a>
                             </div>
