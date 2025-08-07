@@ -25,11 +25,17 @@ Route::group([
         }
         return view('index');
     })->name('index');
-    Route::post('/', [HomeController::class, 'save'])->name('save')->middleware(['auth', 'verified']);
+    Route::post('/', [HomeController::class, 'save'])->name('save')->middleware(['auth']);
     //Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth', 'verified']);
-    // Custom magic link authentication routes
-    Route::post('/register', [MagicLinkController::class, 'sendMagicLink'])->name('register');
-    Route::post('/login', [MagicLinkController::class, 'sendMagicLink'])->name('login');
+    // Standard Laravel authentication routes
+    Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+    Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+
+    // Custom magic link authentication routes (preserved for later use)
+    Route::post('/magic-register', [MagicLinkController::class, 'sendMagicLink'])->name('magic.register');
+    Route::post('/magic-login', [MagicLinkController::class, 'sendMagicLink'])->name('magic.login');
     Route::get('/auth/set-password/{user}', [MagicLinkController::class, 'showSetPasswordForm'])->name('auth.set-password');
     Route::post('/auth/set-password/{user}', [MagicLinkController::class, 'setPassword']);
     Route::get('/auth/magic-login/{user}', [MagicLinkController::class, 'magicLogin'])->name('auth.magic-login');
@@ -55,14 +61,14 @@ Route::group([
     Route::post('/password/email', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
     Route::get('/password/reset/{user}', [PasswordResetController::class, 'showResetForm'])->name('password.reset.form');
     Route::post('/password/reset/{user}', [PasswordResetController::class, 'resetPassword'])->name('password.update');
-    Route::resource('site', SiteController::class)->middleware(['auth', 'verified']);
-    Route::get('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
-    Route::post('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth', 'verified']);
-    Route::get('/export', [HomeController::class, 'export'])->name('export')->middleware(['auth', 'verified']);
-    Route::get('/category/{site_id}', [HomeController::class, 'category'])->name('category')->middleware(['auth', 'verified']);
-    Route::get('/consent/{standard}/{category_id}', [HomeController::class, 'consent'])->name('category')->middleware(['auth', 'verified']);
-    Route::post('/consent/save', [HomeController::class, 'saveConsent'])->name('saveConsent')->middleware(['auth', 'verified']);
-    Route::get('/user', [UserController::class, 'index'])->name('user')->middleware(['auth', 'verified']);
+    Route::resource('site', SiteController::class)->middleware(['auth']);
+    Route::get('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth']);
+    Route::post('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth']);
+    Route::get('/export', [HomeController::class, 'export'])->name('export')->middleware(['auth']);
+    Route::get('/category/{site_id}', [HomeController::class, 'category'])->name('category')->middleware(['auth']);
+    Route::get('/consent/{standard}/{category_id}', [HomeController::class, 'consent'])->name('category')->middleware(['auth']);
+    Route::post('/consent/save', [HomeController::class, 'saveConsent'])->name('saveConsent')->middleware(['auth']);
+    Route::get('/user', [UserController::class, 'index'])->name('user')->middleware(['auth']);
 });
 
 Route::group([

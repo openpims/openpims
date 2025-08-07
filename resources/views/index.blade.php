@@ -56,41 +56,26 @@
                                 {{ session('error') }}
                             </div>
                         @endif
-                        <!-- Unified Email Form -->
-                        <div class="mt-3" style="padding: 15px;">
-                            <form method="POST" action="{{ route('register') }}">
-                                @csrf
-                                <input type="hidden" name="url" value="{{ request()->get('url') }}">
-                                <div class="row mb-3">
-                                    <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-                                    <div class="col-md-8">
-                                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-                                        @error('email')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-8 offset-md-4">
-                                        <p class="text-muted">
-                                            Geben Sie Ihre E-Mail-Adresse ein. Bei neuen E-Mail-Adressen erhalten Sie einen Link zum Setzen Ihres Passworts. Bei bereits registrierten E-Mail-Adressen erhalten Sie einen Login-Link.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row mb-0">
-                                    <div class="col-md-8 offset-md-4">
-                                        <button type="submit" class="btn btn-warning" style="background-color: #ffa64d;">
-                                            Weiter
-                                        </button>
 
-                                        <a class="btn btn-link" href="{{ route('password.request') }}{{ request()->get('url') ? '?url=' . urlencode(request()->get('url')) : '' }}">
-                                            {{ __('Passwort vergessen?') }}
-                                        </a>
-                                    </div>
-                                </div>
-                            </form>
+                        <!-- Call to Action Section -->
+                        <div class="text-center mb-4">
+                            <h4 class="mb-3">Starte jetzt mit OpenPIMS!</h4>
+                            <p class="text-muted mb-4">Erstelle dein kostenloses Konto und verwalte deine Cookie-Banner zentral für alle deine Websites.</p>
+                            <a href="{{ route('register') }}" class="btn btn-warning btn-lg px-5 py-3" style="background-color: #ffa64d; border-color: #ffa64d; font-weight: bold;">
+                                <i class="bi bi-person-plus-fill me-2"></i>
+                                Jetzt kostenlos registrieren
+                            </a>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Quick Login Section -->
+                        <div class="text-center">
+                            <p class="mb-3">Bereits registriert?</p>
+                            <a href="{{ route('login') }}" class="btn btn-outline-warning">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                Hier einloggen
+                            </a>
                         </div>
                     </div>
                 </div>

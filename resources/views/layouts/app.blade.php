@@ -49,14 +49,14 @@
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
-                                <!--li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li-->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}{{ request()->has('url') ? '?url=' . request()->input('url') : '' }}">{{ __('Login') }}</a>
+                                </li>
                             @endif
                             @if (Route::has('register'))
-                                <!--li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li-->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}{{ request()->has('url') ? '?url=' . request()->input('url') : '' }}">{{ __('Register') }}</a>
+                                </li>
                             @endif
                         @else
 
@@ -64,9 +64,9 @@
                                 <a class="nav-link" href="/">Home</a>
                             </li>
 
-                            <li class="nav-item">
+                            <!--li class="nav-item">
                                 <a class="nav-link" href="/export">Export</a>
-                            </li>
+                            </li-->
 
                             <!--li class="nav-item">
                                 <a class="nav-link" href="/setup">Setup</a>
