@@ -68,12 +68,20 @@ class HomeController extends Controller
 
         //load all visited sites
         $sql = sprintf("
-            SELECT site_id, site
-            FROM visits
-            JOIN sites USING (site_id)
-            WHERE user_id=%d
-            ORDER BY visits.updated_at DESC
+            SELECT 
+                v.site_id, 
+                s.site,
+                COALESCE(SUM(CASE WHEN c.necessary = 1 AND con.checked = 1 THEN 1 ELSE 0 END), 0) as necessary_count,
+                COALESCE(SUM(CASE WHEN c.necessary = 0 AND con.checked = 1 THEN 1 ELSE 0 END), 0) as voluntary_count
+            FROM visits v
+            JOIN sites s ON v.site_id = s.site_id
+            LEFT JOIN cookies c ON s.site_id = c.site_id
+            LEFT JOIN consents con ON c.cookie_id = con.cookie_id AND con.user_id = %d
+            WHERE v.user_id=%d
+            GROUP BY v.site_id, s.site
+            ORDER BY v.updated_at DESC
         ",
+            Auth::user()->user_id,
             Auth::user()->user_id
         );
         $sites = DB::select($sql);

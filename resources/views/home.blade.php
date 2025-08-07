@@ -202,7 +202,9 @@
                                 <thead>
                                 <tr>
                                     <th>Site</th>
-                                    <th></th>
+                                    <th>notwendig</th>
+                                    <th>freiwillig</th>
+                                    <th>Aktion</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -210,6 +212,12 @@
                                     <tr>
                                         <td>
                                             {!! $site->site !!}
+                                        </td>
+                                        <td>
+                                            {{ $site->necessary_count }}
+                                        </td>
+                                        <td>
+                                            {{ $site->voluntary_count }}
                                         </td>
                                         <td>
                                             <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" data-site-id="{!! $site->site_id !!}">Setup</button>
@@ -341,6 +349,8 @@
             $.post('/edit-consent', formData, function(response) {
                 if (response.success) {
                     $('#editModal').modal('hide');
+                    // Reload the page after successful save
+                    window.location.reload();
                 } else {
                     alert('Error saving consents. Please try again.');
                 }
