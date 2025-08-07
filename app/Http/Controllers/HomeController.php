@@ -249,6 +249,67 @@ class HomeController extends Controller
 
 
     /**
+     * Get site cookies for AJAX request
+     *
+     * @param string $siteId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSiteCookies($siteId)
+    {
+        $site = Site::find($siteId);
+        $cookies = Cookie::where('site_id', $siteId)->get();
+
+        // Get user's current consents for this site
+        $userConsents = Consent::where('user_id', Auth::user()->user_id)
+            ->whereIn('cookie_id', $cookies->pluck('cookie_id'))
+            ->pluck('checked', 'cookie_id');
+
+        // Add checked status to cookies
+        $cookies = $cookies->map(function($cookie) use ($userConsents) {
+            $cookie->checked = $userConsents->get($cookie->cookie_id, 0) == 1;
+            return $cookie;
+        });
+
+        return response()->json([
+            'site' => $site,
+            'cookies' => $cookies
+        ]);
+    }
+
+    /**
+     * Save consent without redirect (for editModal)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editConsent(Request $request)
+    {
+        $site_id = $request->input('site_id');
+        $consents = $request->input('consents', []);
+
+        $cookies = Cookie::where('site_id', $site_id)->get();
+        foreach ($cookies AS $cookie) {
+            Consent::updateOrCreate([
+                'user_id' => Auth::user()->user_id,
+                'cookie_id' => $cookie->cookie_id,
+            ], [
+                'checked' => $cookie->necessary? 1: 0,
+            ]);
+        }
+
+        foreach ($consents AS $consent) {
+            Consent::updateOrCreate([
+                'user_id' => Auth::user()->user_id,
+                'cookie_id' => $consent,
+            ], [
+                'checked' => 1,
+            ]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Consents saved successfully']);
+    }
+
+    /**
      * Save cookie consents for a site.
      *
      * @param Request $request

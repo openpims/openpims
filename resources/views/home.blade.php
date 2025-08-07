@@ -154,6 +154,42 @@
     </div>
     @endif
 
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form method="post" action="/edit-consent" id="editForm">
+                    @csrf
+                    <input type="hidden" name="site_id" id="editSiteId" value="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Setup</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="editModalBody">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Cookie</th>
+                                <th class="text-end">
+                                    <button
+                                            type="submit"
+                                            class="btn btn-sm btn-primary"
+                                            id="saveEditClick"
+                                    >
+                                        Save
+                                    </button>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody id="editCookiesList">
+                                <!-- Cookies will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     @if(true)
         <div class="container">
@@ -166,6 +202,7 @@
                                 <thead>
                                 <tr>
                                     <th>Site</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -173,6 +210,9 @@
                                     <tr>
                                         <td>
                                             {!! $site->site !!}
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" data-site-id="{!! $site->site_id !!}">Setup</button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -259,6 +299,55 @@
         $   ('#setupModal').modal('show');
         @endif
 
+        // Handle editModal opening
+        $('#editModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var siteId = button.data('site-id');
+            var modal = $(this);
+
+            // Set the site_id in the hidden input
+            modal.find('#editSiteId').val(siteId);
+
+            // Load content via AJAX
+            $.get('/get-site-cookies/' + siteId, function(data) {
+                modal.find('#editModalLabel').text(data.site.site);
+
+                // Build cookies HTML
+                var cookiesHtml = '';
+                data.cookies.forEach(function(cookie) {
+                    var checked = cookie.checked ? 'checked' : '';
+                    var disabled = cookie.necessary ? 'checked disabled' : '';
+
+                    cookiesHtml += '<tr>' +
+                        '<td>' + cookie.cookie + '</td>' +
+                        '<td class="text-end">' +
+                        '<div class="form-check form-switch d-flex justify-content-end">' +
+                        '<input name="consents[]" value="' + cookie.cookie_id + '" class="form-check-input" type="checkbox" role="switch" ' + (cookie.necessary ? disabled : checked) + '>' +
+                        '</div>' +
+                        '</td>' +
+                        '</tr>';
+                });
+
+                modal.find('#editCookiesList').html(cookiesHtml);
+            });
+        });
+
+        // Handle editForm submission
+        $('#editForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.post('/edit-consent', formData, function(response) {
+                if (response.success) {
+                    $('#editModal').modal('hide');
+                } else {
+                    alert('Error saving consents. Please try again.');
+                }
+            }).fail(function() {
+                alert('Error saving consents. Please try again.');
+            });
+        });
 
         // Handle save button clicks
         $("#saveClick").click(function() {

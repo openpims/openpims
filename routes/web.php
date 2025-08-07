@@ -66,6 +66,8 @@ Route::group([
     Route::post('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth']);
     Route::get('/export', [HomeController::class, 'export'])->name('export')->middleware(['auth']);
     Route::post('/consent/save', [HomeController::class, 'saveConsent'])->name('saveConsent')->middleware(['auth']);
+    Route::get('/get-site-cookies/{siteId}', [HomeController::class, 'getSiteCookies'])->name('getSiteCookies')->middleware(['auth']);
+    Route::post('/edit-consent', [HomeController::class, 'editConsent'])->name('editConsent')->middleware(['auth']);
     Route::get('/user', [UserController::class, 'index'])->name('user')->middleware(['auth']);
 });
 
