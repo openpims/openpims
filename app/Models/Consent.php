@@ -11,7 +11,6 @@ class Consent extends Model
     protected $primaryKey = 'consent_id';
     protected $fillable = [
         'user_id',
-        'category_id',
         'cookie_id',
         'checked',
     ];

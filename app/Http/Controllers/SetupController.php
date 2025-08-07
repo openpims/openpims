@@ -2,15 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Console\Supplier;
-use App\Models\Category;
-use App\Models\Consent;
-use App\Models\Standard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redirect;
 
 class SetupController extends Controller
 {
@@ -71,29 +64,9 @@ class SetupController extends Controller
         //    return redirect('/home');
         //}
 
-        //Lese die Standard-Kategorien aus
-        /*
-        $sql = sprintf("SELECT
-                standard_id AS category_id,
-                standard AS category,
-                description,
-                IF(checked, 'checked', '') AS checked,
-                IF(disabled, 'disabled', '') AS disabled
-            FROM standards
-            WHERE user_id = %d
-            ORDER BY standard_id
-        ", Auth::user()->user_id);
-        $categories = DB::select($sql);
-        foreach ($categories AS $id => $category) {
-            $categories[$id]->suppliers = [];
-        }*/
-
-        $categories = [];
-
         return view('setup', [
             'user' => Auth::user(),
             'host' => $host,
-            'categories' => $categories,
             'extension' => $extension,
             'valid_url' => $valid_url,
             'isPost' => $request->isMethod('post')

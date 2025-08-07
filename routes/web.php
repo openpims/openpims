@@ -65,8 +65,6 @@ Route::group([
     Route::get('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth']);
     Route::post('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth']);
     Route::get('/export', [HomeController::class, 'export'])->name('export')->middleware(['auth']);
-    Route::get('/category/{site_id}', [HomeController::class, 'category'])->name('category')->middleware(['auth']);
-    Route::get('/consent/{standard}/{category_id}', [HomeController::class, 'consent'])->name('category')->middleware(['auth']);
     Route::post('/consent/save', [HomeController::class, 'saveConsent'])->name('saveConsent')->middleware(['auth']);
     Route::get('/user', [UserController::class, 'index'])->name('user')->middleware(['auth']);
 });

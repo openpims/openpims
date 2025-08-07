@@ -101,32 +101,10 @@
                         Im Bereich Optionen fügst du dann deine persönliche Url ein
                     </div>
                 </div>
-                <div class="card border-warning mb-3">
-                    <div class="card-header">
-                        <font size="18px">3.</font>
-                        Wähle die Kategorien aus, für die du Cookies in deinem Browser zulassen möchtest.
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            @foreach($categories as $category)
-                                <div class="form-check form-switch">
-                                    <input data-standard="1" class="form-check-input" type="checkbox"
-                                           id="f{!! $category->category_id !!}"
-                                           value="{!! $category->category_id !!}" {!! $category->checked !!} {!! $category->disabled !!}>
-                                    <label class="form-check-label" for="f{!! $category->category_id !!}">
-                                        {!! $category->category !!}<br>
-                                        <small>{!! $category->description !!}</small>
-                                    </label>
-                                </div>
-                                <br>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
                 @if($user->setup)
                     <div class="card border-warning mb-3">
                         <div class="card-header">
-                            <font size="18px">4.</font>
+                            <font size="18px">3.</font>
                             Wenn du das Setup abgeschlossen hast, dann überprüfen wir es gerne für dich.
                         </div>
                         <div class="card-body">
@@ -141,7 +119,7 @@
                 @else
                     <div class="card border-warning mb-3">
                         <div class="card-header">
-                            <font size="18px">4.</font>
+                            <font size="18px">3.</font>
                             Großartig, soweit ich das sehe, scheint alles ordnungsgemäß eingerichtet zu sein.
                         </div>
                         <div class="card-body">
@@ -166,13 +144,5 @@
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         });
 
-        $(document).on("click", ".form-check-input", function () {
-            var category_id = $(this).val();
-            var standard = $(this).data('standard') ? 1 : 0;
-            console.log(standard);
-            $.getJSON("/consent/" + standard + "/" + category_id, function (category) {
-
-            });
-        });
     </script>
 @endsection

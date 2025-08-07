@@ -213,13 +213,12 @@ class HomeController extends Controller
     {
         $fileName = 'openpims.csv';
 
-        $sql = "SELECT site, category
+        $sql = "SELECT DISTINCT sites.site
             FROM consents
-            JOIN categories USING (category_id)
-            LEFT JOIN standards USING (standard_id)
+            JOIN cookies USING (cookie_id)
             JOIN sites USING (site_id)
-            WHERE COALESCE(consents.checked, standards.checked, 0)
-        ";
+            WHERE consents.checked = 1
+            AND consents.user_id = " . Auth::user()->user_id;
         $consents = DB::select($sql);
 
         $headers = array(
@@ -230,7 +229,7 @@ class HomeController extends Controller
             "Expires"             => "0"
         );
 
-        $columns = array('Site', 'Category');
+        $columns = array('Site');
 
         $callback = function() use ($consents, $columns) {
             $file = fopen('php://output', 'w');
@@ -238,9 +237,8 @@ class HomeController extends Controller
 
             foreach ($consents as $consent) {
                 $row['Site']  = $consent->site;
-                $row['Category']    = $consent->category;
 
-                fputcsv($file, array($row['Site'], $row['Category']));
+                fputcsv($file, array($row['Site']));
             }
 
             fclose($file);
@@ -249,70 +247,6 @@ class HomeController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    /*public function standard()
-    {
-        $sql = sprintf("SELECT
-                standard_id AS category_id,
-                standard AS category,
-                IF(checked, 'checked', '') AS checked,
-                IF(disabled, 'disabled', '') AS disabled
-            FROM standards
-            WHERE user_id = %d
-            ORDER BY standard_id
-        ", Auth::user()->user_id);
-        $categories = DB::select($sql);
-        foreach ($categories AS $id => $category) {
-            $categories[$id]->vendors = [];
-        }
-
-        return $categories;
-    }*/
-
-    public function category(int $site_id)
-    {
-        $sql = sprintf("SELECT
-                category_id,
-                category,
-                IF(COALESCE(consents.checked, standards.checked, 0), 'checked', '') AS checked,
-                IF(COALESCE(disabled, 0), 'disabled', '') AS disabled
-            FROM consents
-            JOIN categories USING (category_id)
-            LEFT JOIN standards USING (standard_id)
-            WHERE consents.user_id = %d
-            AND site_id = %d
-            ORDER BY disabled DESC
-        ",
-            Auth::user()->user_id,
-            $site_id
-        );
-        $categories = DB::select($sql);
-
-        foreach ($categories AS $id => $category) {
-            $vendors = Vendor::where('category_id', $category->category_id)->get(['vendor_id', 'vendor', 'url']);
-            $categories[$id]->vendors = $vendors;
-            $categories[$id]->amount = count($vendors);
-        }
-
-        return $categories;
-    }
-
-    public function consent(bool $standard_bool, int $category_id)
-    {
-        if ($standard_bool) {
-            $standard = Standard::find($category_id);
-            $standard->checked = $standard->checked? 0: 1;
-            $standard->save();
-        } else {
-            $consent = Consent::where('user_id', Auth::user()->user_id)
-                ->where('category_id', $category_id)
-                ->first();
-            if ($consent instanceof Consent) {
-                $consent->checked = $consent->checked? 0: 1;
-                $consent->save();
-            }
-        }
-
-    }
 
     /**
      * Save cookie consents for a site.
@@ -362,4 +296,5 @@ class HomeController extends Controller
 
         return redirect()->back()->with('success', 'Cookie preferences saved successfully');
     }
+
 }
