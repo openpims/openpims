@@ -211,7 +211,9 @@
                                 @foreach($sites as $site)
                                     <tr>
                                         <td>
-                                            {!! $site->site !!}
+                                            <a href="{{ route('visit', ['siteId' => $site->site_id]) }}" target="_blank">
+                                                {!! $site->site !!}
+                                            </a>
                                         </td>
                                         <td>
                                             {{ $site->necessary_count }}

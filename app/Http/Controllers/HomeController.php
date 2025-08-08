@@ -217,6 +217,23 @@ class HomeController extends Controller
         return redirect('/');
     }
 
+    public function visit($siteId)
+    {
+        // Get the site information
+        $site = Site::find($siteId);
+        if ($site && $site->url) {
+            $parsedUrl = parse_url($site->url);
+            if ($parsedUrl && isset($parsedUrl['scheme']) && isset($parsedUrl['host'])) {
+                $host = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+                if (isset($parsedUrl['port']) && !(($parsedUrl['scheme'] === 'http' && $parsedUrl['port'] === 80) || ($parsedUrl['scheme'] === 'https' && $parsedUrl['port'] === 443))) {
+                    $host .= ':' . $parsedUrl['port'];
+                }
+                return redirect($host);
+            }
+        }
+        return redirect('/');
+    }
+
     public function export(Request $request)
     {
         $fileName = 'openpims.csv';
