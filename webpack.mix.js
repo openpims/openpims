@@ -15,9 +15,6 @@ mix
     .copy('node_modules/bootstrap-select/dist/js/bootstrap-select.min.js.map', 'public/bootstrap-select.min.js.map')
     .copy('node_modules/bootstrap-select/dist/css/bootstrap-select.min.css', 'public/bootstrap-select.min.css')
 
-    //.copy('node_modules/popper.js/dist/umd/popper.min.js', 'public/popper.min.js')
-    //.copy('node_modules/popper.js/dist/umd/popper.min.js.map', 'public/popper.min.js.map')
-
     .copyDirectory('node_modules/@browser-logos', 'public/browser-logos')
 
     .version()
