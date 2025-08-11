@@ -45,16 +45,18 @@
                                                 <p>Chrome</p>
                                             </div>
                                             <div class="col">
-                                                <img src="/browser-logos/safari/safari_64x64.png">
-                                                <p>Safari<br>(coming soon)</p>
-                                            </div>
-                                            <div class="col">
-                                                <img src="/browser-logos/firefox/firefox_64x64.png">
-                                                <p>Firefox<br>(coming soon)</p>
+                                                <a href="https://addons.mozilla.org/de/firefox/addon/openpims/" target="_blank">
+                                                    <img src="/browser-logos/firefox/firefox_64x64.png">
+                                                </a>
+                                                <p>Firefox</p>
                                             </div>
                                             <div class="col">
                                                 <img src="/browser-logos/edge/edge_64x64.png">
                                                 <p>Edge<br>(coming soon)</p>
+                                            </div>
+                                            <div class="col">
+                                                <img src="/browser-logos/safari/safari_64x64.png">
+                                                <p>Safari<br>(coming soon)</p>
                                             </div>
                                         </div>
                                     </div>
