@@ -149,9 +149,8 @@ class HomeController extends Controller
         foreach ($array['cookies'] as $cookie) {
             $sql = sprintf("
                 INSERT IGNORE 
-                INTO cookies 
-                VALUE (
-                   NULL, 
+                INTO cookies (cookie, site_id, necessary, created_at, updated_at)
+                VALUES (
                    '%s', 
                    %d,
                    %d,

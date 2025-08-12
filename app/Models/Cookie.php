@@ -13,5 +13,10 @@ class Cookie extends Model
         'cookie',
         'site_id',
         'necessary',
+        'providers',
+        'data_stored',
+        'purposes',
+        'retention_periods',
+        'revocation_info',
     ];
 }

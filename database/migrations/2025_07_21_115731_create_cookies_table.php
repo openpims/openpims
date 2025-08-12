@@ -18,6 +18,11 @@ return new class extends Migration
             $table->unsignedInteger('site_id');
             $table->unique(['cookie', 'site_id'], 'unique');
             $table->boolean('necessary')->default(0);
+            $table->text('providers')->nullable()->after('necessary');
+            $table->text('data_stored')->nullable()->after('providers');
+            $table->text('purposes')->nullable()->after('data_stored');
+            $table->text('retention_periods')->nullable()->after('purposes');
+            $table->text('revocation_info')->nullable()->after('retention_periods');
             $table->timestamps();
         });
     }
