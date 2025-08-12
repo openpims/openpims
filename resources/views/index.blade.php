@@ -131,7 +131,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="text-start">
-                                <img src="/BMBF_Logo-dark.svg">
+                                <img src="/BMBF_Logo-dark.svg" height="100">
                             </div>
                             <div class="text-end">
                                 <a href="/datenschutz.html">
