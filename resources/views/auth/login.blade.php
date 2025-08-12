@@ -46,6 +46,9 @@
                             <label for="" class="col-md-4 col-form-label text-md-end"></label>
                             <div class="col-md-6">
                                 <x-turnstile />
+                                @error('cf-turnstile-response')
+                                    <span class="text-danger small" role="alert"><strong>{{ $message }}</strong></span>
+                                @enderror
                             </div>
                         </div>
 

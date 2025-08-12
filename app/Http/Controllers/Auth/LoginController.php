@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
 {
@@ -80,6 +81,18 @@ class LoginController extends Controller
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
+    }
+
+    /**
+     * Validate the user login request.
+     */
+    protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            $this->username() => ['required','string'],
+            'password' => ['required','string'],
+            'cf-turnstile-response' => ['required', Rule::turnstile()],
+        ]);
     }
 
     /**
