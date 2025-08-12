@@ -50,6 +50,12 @@
                             </div>
                         </div>
 
+                        <div class="row mb-3">
+                            <label for="" class="col-md-4 col-form-label text-md-end"></label>
+                            <div class="col-md-6">
+                                <x-turnstile />
+                            </div>
+                        </div>
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">

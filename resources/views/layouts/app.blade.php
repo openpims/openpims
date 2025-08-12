@@ -16,6 +16,7 @@
 
     <link rel="icon" href="/favicon.png" type="image/png">
 
+    @turnstileScripts()
 
 </head>
 <body>
