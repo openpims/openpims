@@ -7,14 +7,17 @@
             background-color: #ffa64d !important;
             border-color: #ffa64d !important;
         }
+
         .nav-tabs .nav-link:not(.active):hover {
             background-color: #fff8ee;
         }
+
         /* When Register tab is not active, it should have white background and orange text */
         #register-tab:not(.active) {
             background-color: #fff !important;
             color: #ffa64d !important;
         }
+
         .tab-pane {
             border: 1px solid #ffa64d;
             border-top: none;
@@ -60,8 +63,10 @@
                         <!-- Call to Action Section -->
                         <div class="text-center mb-4">
                             <h4 class="mb-3">Starte jetzt mit OpenPIMS!</h4>
-                            <p class="text-muted mb-4">Erstelle dein kostenloses Konto und verwalte deine Cookie-Banner zentral für alle deine Websites.</p>
-                            <a href="{{ route('register') }}" class="btn btn-warning btn-lg px-5 py-3" style="background-color: #ffa64d; border-color: #ffa64d; font-weight: bold;">
+                            <p class="text-muted mb-4">Erstelle dein kostenloses Konto und verwalte deine Cookie-Banner
+                                zentral für alle deine Websites.</p>
+                            <a href="{{ route('register') }}" class="btn btn-warning btn-lg px-5 py-3"
+                               style="background-color: #ffa64d; border-color: #ffa64d; font-weight: bold;">
                                 <i class="bi bi-person-plus-fill me-2"></i>
                                 Jetzt kostenlos registrieren
                             </a>
@@ -89,7 +94,8 @@
                         <div class="container text-center">
                             <div class="row">
                                 <div class="col">
-                                    <a href="https://chromewebstore.google.com/detail/openpims/pgffgdajiokgdighlhahihihkgphlcnc" target="_blank">
+                                    <a href="https://chromewebstore.google.com/detail/openpims/pgffgdajiokgdighlhahihihkgphlcnc"
+                                       target="_blank">
                                         <img src="/browser-logos/chrome/chrome_64x64.png">
                                     </a>
                                     <p>Chrome</p>
@@ -121,68 +127,18 @@
                         <center><img src="/login.png" height="300" border="1"></center>
                     </div>
                 </div>
-                <!--div class="card mb-3" style="border-color: orange;">
-                    <div class="card-header">
-                        <font size="18px">4.</font>
-                        Wähle die Kategorien aus, für die du Cookies in deinem Browser zulassen möchtest.
-                    </div>
+                <div class="card mb-3" style="border-color: orange;">
                     <div class="card-body">
-                        <div class="mb-3">
-
-                            <div class="form-check form-switch">
-                                <input data-standard="1" class="form-check-input" type="checkbox"
-                                       id="f5"
-                                       value="5" checked disabled>
-                                <label class="form-check-label" for="f5">
-                                    Unbedingt erforderliche Cookies<br>
-                                    <small>Diese Cookies werden benötigt, damit Sie solche grundlegenden Funktionen wie Sicherheit, Identitätsprüfung und Netzwerkmanagement nutzen können. Sie können daher nicht deaktiviert werden.</small>
-                                </label>
+                        <div class="row">
+                            <div class="text-start">
+                                <img src="/BMBF_Logo-dark.svg">
                             </div>
-                            <br>
-                            <div class="form-check form-switch">
-                                <input data-standard="1" class="form-check-input" type="checkbox"
-                                       id="f6"
-                                       value="6" disabled>
-                                <label class="form-check-label" for="f6">
-                                    Cookies für Marketingzwecke<br>
-                                    <small>Cookies für Marketingzwecke werden verwendet, um die Effektivität von Werbung zu messen, Interessen von Besuchern zu erfassen und Werbeanzeigen an deren persönliche Bedürfnisse anzupassen.</small>
-                                </label>
-                            </div>
-                            <br>
-                            <div class="form-check form-switch">
-                                <input data-standard="1" class="form-check-input" type="checkbox"
-                                       id="f7"
-                                       value="7" disabled>
-                                <label class="form-check-label" for="f7">
-                                    Funktionale Cookies<br>
-                                    <small>Funktionale Cookies werden verwendet, um bereits getätigte Angaben zu speichern und darauf basierend verbesserte und personalisierte Funktionen anzubieten.</small>
-                                </label>
-                            </div>
-                            <br>
-                            <div class="form-check form-switch">
-                                <input data-standard="1" class="form-check-input" type="checkbox"
-                                       id="f8"
-                                       value="8" disabled>
-                                <label class="form-check-label" for="">
-                                    Analytics-Cookies<br>
-                                    <small>Analytics-Cookies werden verwendet, um zu verstehen, wie Webseiten genutzt werden, um Fehler zu entdecken und Funktionalität von Webseiten zu verbessern.</small>
-                                </label>
+                            <div class="text-end">
+                                <a href="/datenschutz.html">
+                                    Datenschutzerklärung
+                                </a>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div-->
-        </div>
-        <div class="card mb-3" style="border-color: orange;">
-            <div class="card-body">
-                <div class="row">
-                    <div class="text-start">
-                        <img src="/BMBF_Logo-dark.svg">
-                    </div>
-                    <div class="text-end">
-                        <a href="/datenschutz.html">
-                            Datenschutzerklärung
-                        </a>
                     </div>
                 </div>
             </div>
