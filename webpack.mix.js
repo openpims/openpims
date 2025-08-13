@@ -4,7 +4,6 @@ mix
     .copy('node_modules/jquery/dist/jquery.min.js', 'public/jquery.min.js')
     .copy('node_modules/bootstrap/dist/css/bootstrap.min.css', 'public/bootstrap.min.css')
     .copy('node_modules/bootstrap/dist/css/bootstrap.min.css.map', 'public/bootstrap.min.css.map')
-    //.copy('node_modules/bootstrap/dist/js/bootstrap.min.js.map', 'public/bootstrap.min.js.map')
     .copy('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', 'public/bootstrap.bundle.min.js')
     .copy('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map', 'public/bootstrap.bundle.min.js.map')
 

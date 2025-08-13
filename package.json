@@ -17,7 +17,6 @@
         "@browser-logos/opera": "^1.1.11",
         "@browser-logos/safari": "^2.1.0",
         "@browser-logos/web": "^3.0.1",
-        "@popperjs/core": "^2.11.6",
         "bootstrap": "^5.2.3",
         "bootstrap-icons": "^1.10.4",
         "bootstrap-select": "^1.14.0-beta3",
