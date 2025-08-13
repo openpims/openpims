@@ -149,17 +149,27 @@ class HomeController extends Controller
         foreach ($array['cookies'] as $cookie) {
             $sql = sprintf("
                 INSERT IGNORE 
-                INTO cookies (cookie, site_id, necessary, created_at, updated_at)
+                INTO cookies (cookie, site_id, necessary, providers, data_stored, purposes, retention_periods, revocation_info, created_at, updated_at)
                 VALUES (
                    '%s', 
                    %d,
                    %d,
+                   '%s',
+                   '%s',
+                   '%s',
+                   '%s',
+                   '%s',
                    TIMESTAMP(NOW()), 
                    TIMESTAMP(NOW())
             )",
                 $cookie['cookie'],
                 $site_id,
                 isset($cookie['necessary']) ? $cookie['necessary'] ? 1 : 0 : 0,
+                isset($cookie['providers']) ? addslashes($cookie['providers']) : '',
+                isset($cookie['data_stored']) ? addslashes($cookie['data_stored']) : '',
+                isset($cookie['purposes']) ? addslashes($cookie['purposes']) : '',
+                isset($cookie['retention_periods']) ? addslashes($cookie['retention_periods']) : '',
+                isset($cookie['revocation_info']) ? addslashes($cookie['revocation_info']) : ''
             );
             DB::insert($sql);
         }
