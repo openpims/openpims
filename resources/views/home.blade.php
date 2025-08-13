@@ -91,7 +91,7 @@
 
     @if($show_site)
     <div id="createModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <form method="post" action="/">
                     @csrf
@@ -101,18 +101,24 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <table class="table table-striped">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-sm">
                             <thead>
                             <tr>
-                                <th>Cookie</th>
-                                <th class="text-end">
+                                <th style="width: 15%;">Cookie</th>
+                                <th style="width: 10%;">Anbieter</th>
+                                <!--th style="width: 20%;">Gespeicherte Daten</th-->
+                                <th style="width: 30%;">Zwecke</th>
+                                <th style="width: 10%;">Laufzeit</th>
+                                <!--th>Widerrufsinfo</th-->
+                                <th class="text-end" style="width: 5%;">
                                     <button
                                             type="submit"
                                             class="btn btn-sm btn-primary"
                                             id="saveClickOrg"
                                             data-site_id="{!! $site->site !!}"
                                     >
-                                        Save und zurück zur Webseite
+                                        Save<br>und<br>zurück
                                     </button>
                                 </th>
                             </tr>
@@ -123,6 +129,21 @@
                                     <td>
                                         {!! $cookie->cookie !!}
                                     </td>
+                                    <td>
+                                        {!! $cookie->providers !!}
+                                    </td>
+                                    <!--td>
+                                        {!! $cookie->data_stored !!}
+                                    </td-->
+                                    <td>
+                                        {!! $cookie->purposes !!}
+                                    </td>
+                                    <td>
+                                        {!! $cookie->retention_periods !!}
+                                    </td>
+                                    <!--td>
+                                        {!! $cookie->revocation_info !!}
+                                    </td-->
                                     <td class="text-end">
                                         <div class="form-check form-switch d-flex justify-content-end">
                                             <input
@@ -145,6 +166,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                        </div>
                     </div>
                     <!--div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -158,7 +180,7 @@
 
     <!-- Edit Modal -->
     <div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <form method="post" action="/edit-consent" id="editForm">
                     @csrf
@@ -168,11 +190,15 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="editModalBody">
-                        <table class="table table-striped">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-sm">
                             <thead>
                             <tr>
-                                <th>Cookie</th>
-                                <th class="text-end">
+                                <th style="width: 15%;">Cookie</th>
+                                <th style="width: 10%;">Anbieter</th>
+                                <th style="width: 30%;">Zwecke</th>
+                                <th style="width: 10%;">Laufzeit</th>
+                                <th class="text-end" style="width: 5%;">
                                     <button
                                             type="submit"
                                             class="btn btn-sm btn-primary"
@@ -187,6 +213,7 @@
                                 <!-- Cookies will be loaded here -->
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -332,6 +359,9 @@
 
                     cookiesHtml += '<tr>' +
                         '<td>' + cookie.cookie + '</td>' +
+                        '<td>' + (cookie.providers || '') + '</td>' +
+                        '<td>' + (cookie.purposes || '') + '</td>' +
+                        '<td>' + (cookie.retention_periods || '') + '</td>' +
                         '<td class="text-end">' +
                         '<div class="form-check form-switch d-flex justify-content-end">' +
                         '<input name="consents[]" value="' + cookie.cookie_id + '" class="form-check-input" type="checkbox" role="switch" ' + (cookie.necessary ? disabled : checked) + '>' +

@@ -47,7 +47,7 @@ class HomeController extends Controller
         $cookies = [];
         if ($site instanceof Site) {
             $sql = sprintf("
-                SELECT cookie_id, cookie, necessary, checked
+                SELECT *
                 FROM cookies
                 LEFT JOIN consents USING (cookie_id)
                 WHERE site_id=%d
