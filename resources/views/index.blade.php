@@ -107,6 +107,12 @@
                                     <p>Firefox</p>
                                 </div>
                                 <div class="col">
+                                    <a href="https://github.com/openpims/mitmproxy" target="_blank">
+                                        <img src="/mitmproxy.png" width="64" height="64">
+                                    </a>
+                                    <p>Mitmproxy Addon</p>
+                                </div>
+                                <div class="col">
                                     <img src="/browser-logos/edge/edge_64x64.png">
                                     <p>Edge<br>(coming soon)</p>
                                 </div>
