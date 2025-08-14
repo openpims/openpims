@@ -28,7 +28,7 @@
                             <div class="card mb-3" style="border-color: orange;">
                                 <div class="card-header">
                                     <font size="18px">2.</font>
-                                    Installiere die passende Browser-Erweiterung für dich.
+                                    IInstalliere die passende Browser-Erweiterung oder das Addon für dich.
                                     @if($extension_installed)
                                         <span style="color: green; font-size: 48px; font-weight: bold; float: right;">✓</span>
                                     @else
@@ -49,6 +49,12 @@
                                                     <img src="/browser-logos/firefox/firefox_64x64.png">
                                                 </a>
                                                 <p>Firefox</p>
+                                            </div>
+                                            <div class="col">
+                                                <a href="https://github.com/openpims/mitmproxy" target="_blank">
+                                                    <img src="/mitmproxy.png" width="64" height="64">
+                                                </a>
+                                                <p>Mitmproxy Addon</p>
                                             </div>
                                             <div class="col">
                                                 <img src="/browser-logos/edge/edge_64x64.png">

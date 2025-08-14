@@ -88,7 +88,7 @@
                 <div class="card mb-3" style="border-color: orange;">
                     <div class="card-header">
                         <font size="18px">2.</font>
-                        Installiere die passende Browser-Erweiterung für dich.
+                        Installiere die passende Browser-Erweiterung oder das Addon für dich.
                     </div>
                     <div class="card-body text-in">
                         <div class="container text-center">
