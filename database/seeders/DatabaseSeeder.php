@@ -19,5 +19,11 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make(env('TEST_PASSWORD')),
             'email_verified_at' => now(),
         ]);
+
+        User::create([
+            'email' => env('TEST_EMAIL_EDGE'),
+            'password' => Hash::make(env('TEST_PASSWORD_EDGE')),
+            'email_verified_at' => now(),
+        ]);
     }
 }
