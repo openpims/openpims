@@ -51,14 +51,16 @@
                                                 <p>Firefox</p>
                                             </div>
                                             <div class="col">
+                                                <a href="https://microsoftedge.microsoft.com/addons/detail/openpims/naejpnnnabpkndljlpmoihhejeinjlni" target="_blank">
+                                                    <img src="/browser-logos/edge/edge_64x64.png">
+                                                </a>
+                                                <p>Edge</p>
+                                            </div>
+                                            <div class="col">
                                                 <a href="https://github.com/openpims/mitmproxy" target="_blank">
                                                     <img src="/mitmproxy.png" width="64" height="64">
                                                 </a>
                                                 <p>Mitmproxy Addon</p>
-                                            </div>
-                                            <div class="col">
-                                                <img src="/browser-logos/edge/edge_64x64.png">
-                                                <p>Edge<br>(coming soon)</p>
                                             </div>
                                             <div class="col">
                                                 <img src="/browser-logos/safari/safari_64x64.png">
