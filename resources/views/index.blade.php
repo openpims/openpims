@@ -129,7 +129,7 @@
                 <div class="card mb-3" style="border-color: orange;">
                     <div class="card-header">
                         <font size="18px">3.</font>
-                        Logge dich in der Extension ein mit deinen openPIMS Benutzerdaten.
+                        Logge dich in der Extension ein mit deinen OpenPIMS Benutzerdaten.
                     </div>
                     <div class="card-body text-in">
                         <center><img src="/login.png" height="300" border="1"></center>

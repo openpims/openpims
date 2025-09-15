@@ -1,12 +1,12 @@
-# openPIMS
+# OpenPIMS
 
-openPIMS ist ein Entwurf für ein Personal Information Management System auf openSource-Basis.
+OpenPIMS ist ein Entwurf für ein Personal Information Management System auf openSource-Basis.
 
 Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chrome.
 
 ```mermaid
   graph LR;
-      A((openPIMS)) --> B(Chrome<br>Firefox<br>Edge);
+      A((OpenPIMS)) --> B(Chrome<br>Firefox<br>Edge);
       B --> C((Webseite));
       C <--> A;
       style A fill:orange
@@ -70,8 +70,8 @@ Das Vendors-Array hat folgende Struktur
   autonumber
   actor User
     User->>Website: Hier meine User-Url
-    Website->>openPIMS: Hier ist die User-Url<br>und unsere Cookie-Definition
-    openPIMS->>Website: und hier der Consens des Users
+    Website->>OpenPIMS: Hier ist die User-Url<br>und unsere Cookie-Definition
+    OpenPIMS->>Website: und hier der Consens des Users
     Website->>User: Hier die Cookies
 ```
 

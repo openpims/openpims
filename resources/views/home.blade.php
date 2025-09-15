@@ -73,7 +73,7 @@
                             <div class="card mb-3" style="border-color: orange;">
                                 <div class="card-header">
                                     <font size="18px">3.</font>
-                                    Logge dich in der Extension ein mit deinen openPIMS Benutzerdaten.
+                                    Logge dich in der Extension ein mit deinen OpenPIMS Benutzerdaten.
                                     @if($valid_url)
                                         <span style="color: green; font-size: 48px; font-weight: bold; float: right;">✓</span>
                                     @else

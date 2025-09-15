@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'openPIMS') }}</title>
+    <title>{{ config('app.name', 'OpenPIMS') }}</title>
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ mix('/bootstrap.min.css') }}">
@@ -25,7 +25,7 @@
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     <img src="/openpims.png" width="32" height="32" class="d-inline-block align-top" alt="">
-                    {{ config('app.name', 'openPIMS') }}
+                    {{ config('app.name', 'OpenPIMS') }}
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
