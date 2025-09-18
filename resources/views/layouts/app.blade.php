@@ -40,6 +40,14 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
+                        @if(env('PROVIDER_URL') && env('PROVIDER_NAME'))
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" href="{{ env('PROVIDER_URL') }}" target="_blank">
+                                    <i class="bi bi-briefcase me-1"></i>
+                                    {{ env('PROVIDER_NAME') }}
+                                </a>
+                            </li>
+                        @endif
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
