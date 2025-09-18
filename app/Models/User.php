@@ -34,6 +34,9 @@ class User extends Authenticatable
         'email',
         'password',
         'token',
+        'stripe_customer_id',
+        'subscription_status',
+        'subscription_id',
     ];
 
     /**
@@ -64,5 +67,15 @@ class User extends Authenticatable
             $user->token = Str::lower(Str::random(8));
             $user->save();
         });
+    }
+
+    public function hasActiveSubscription()
+    {
+        return $this->subscription_status === 'active';
+    }
+
+    public function needsSubscription()
+    {
+        return !$this->hasActiveSubscription();
     }
 }

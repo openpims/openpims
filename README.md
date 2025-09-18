@@ -34,35 +34,33 @@ Das Vendors-Array hat folgende Struktur
 - Vendor (String)
 - Url (URL-String)
 
-#### Beispiel (openpims.json)
+### OpenAPI-Style Identifier Arrays
 
-    [
-        {
-            "category": "necessary",
-            "text": "Unbedingt erforderliche Cookies",
-            "mapping": "necessary",
-            "vendors": []
-        },
-        {
-            "category": "marketing",
-            "text": "Cookies für Marketingzwecke",
-            "mapping": "marketing",
-            "vendors": [
-                {
-                    "vendor": "Datawrapper GmbH",
-                    "url" : "https://www.datawrapper.de/privacy"
-                },
-                {
-                    "vendor": "Facebook Video",
-                    "url" : "https://www.facebook.com/privacy"
-                }
-            ]
-        },
-        {
-            "category": "test",
-            "text": "Test-Cookies"
-        }
-    ]
+Die Cookie-Definitionen unterstützen jetzt OpenAPI-style Identifier-Arrays in der Beschreibungs-Sprache:
+
+```yaml
+identifiers:
+  type: array
+  items:
+    $ref: '#/components/schemas/Identifier'
+
+Identifier:
+  type: object
+  properties:
+    identifier:
+      type: string
+    value:
+      type: string
+      nullable: true
+```
+
+Unterstützte Identifier-Typen:
+- `purpose`: Zweck des Cookies
+- `provider`: Anbieter/Dienstleister
+- `retention`: Aufbewahrungsdauer
+- `data_stored`: Gespeicherte Daten
+- `revocation_info`: Widerrufs-Informationen
+
 
 ## Workflow
 ```mermaid

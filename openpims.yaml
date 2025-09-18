@@ -1,0 +1,67 @@
+openapi: 3.1.0
+info:
+  title: OpenPIMS Cookie Definition Schema
+  version: 1.0.0
+components:
+  schemas:
+    CookieDefinition:
+      type: object
+      additionalProperties: false
+      required:
+        - site
+        - cookies
+      properties:
+        site:
+          type: string
+        cookies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Cookie'
+      example:
+        site: PopSet
+        cookies:
+          - cookie: functional
+            necessary: true
+            purpose: a
+            provider: b
+            retention: 1
+            data_stored: d
+            revocation_info: e
+          - cookie: counter
+            purpose: a
+            provider: b
+            retention: 10
+            data_stored: d
+            revocation_info: e
+    Cookie:
+      type: object
+      additionalProperties: false
+      required:
+        - cookie
+        - purpose
+        - provider
+        - retention
+        - data_stored
+        - revocation_info
+      properties:
+        cookie:
+          type: string
+          description: Cookie-Name.
+        necessary:
+          type: boolean
+          description: Gibt an, ob das Cookie unbedingt erforderlich ist.
+        purpose:
+          type: string
+          description: Kurze Beschreibung des Cookie-Zwecks.
+        provider:
+          type: string
+          description: Die Entität, die das Cookie setzt (z.B. die Website oder ein Drittanbieter).
+        retention:
+          type: integer
+          description: Aufbewahrungsdauer (z.B. Anzahl der Tage).
+        data_stored:
+          type: string
+          description: Welche Art von Daten im Cookie gespeichert werden.
+        revocation_info:
+          type: string
+          description: Wie der Benutzer die Einwilligung widerrufen oder das Cookie deaktivieren kann.

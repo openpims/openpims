@@ -7,7 +7,6 @@ use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -50,11 +49,7 @@ class RegisterController extends Controller
      */
     protected function redirectTo()
     {
-        if (request()->has('url')) {
-            return '/?url=' . request()->input('url');
-        }
-
-        return RouteServiceProvider::HOME;
+        return route('subscription.checkout');
     }
 
     /**
