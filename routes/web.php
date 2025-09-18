@@ -45,12 +45,23 @@ Route::group([
                 }
             }
 
-            // Fetch cookie data from the URL
+            // Fetch cookie data from the URL using same logic as HomeController
             $cookieData = null;
             try {
-                $jsonContent = file_get_contents($urlParam);
-                if ($jsonContent !== false) {
-                    $cookieData = json_decode($jsonContent, true);
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $urlParam);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15"));
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10); // 10 second timeout
+                $result = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+
+                if ($result !== false && $httpCode === 200) {
+                    $cookieData = json_decode($result, true);
                 }
             } catch (Exception $e) {
                 // Handle error silently, show URL without cookie data

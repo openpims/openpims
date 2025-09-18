@@ -125,58 +125,39 @@
                         </div>
                     </div>
 
-                    @if(isset($cookieData) && $cookieData)
+                    @if(isset($cookieData) && $cookieData && isset($cookieData['cookies']))
                         <!-- Display Cookie Information -->
                         <div class="card mb-3" style="border-color: #17a2b8;">
                             <div class="card-header">
-                                <h5><i class="bi bi-cookie me-2"></i>Erkannte Cookies</h5>
+                                <h5><i class="bi bi-cookie me-2"></i>Erkannte Cookies von {{ $cookieData['site'] ?? parse_url($urlParam, PHP_URL_HOST) }}</h5>
                             </div>
                             <div class="card-body">
-                                @if(isset($cookieData['cookies']) && is_array($cookieData['cookies']))
+                                @if(is_array($cookieData['cookies']) && count($cookieData['cookies']) > 0)
                                     <div class="table-responsive">
                                         <table class="table table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Name</th>
-                                                    <th>Domain</th>
-                                                    <th>Zweck</th>
-                                                    <th>Kategorie</th>
+                                                    <th>Cookie</th>
                                                     <th>Anbieter</th>
+                                                    <th>Zweck</th>
+                                                    <th>Aufbewahrungsdauer</th>
+                                                    <th>Notwendig</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach($cookieData['cookies'] as $cookie)
                                                     <tr>
-                                                        <td><code>{{ $cookie['name'] ?? 'Unbekannt' }}</code></td>
-                                                        <td>{{ $cookie['domain'] ?? 'Unbekannt' }}</td>
-                                                        <td>{{ $cookie['purpose'] ?? 'Nicht spezifiziert' }}</td>
+                                                        <td><code>{{ $cookie['cookie'] ?? 'Unbekannt' }}</code></td>
+                                                        <td>{{ $cookie['providers'] ?? 'Nicht angegeben' }}</td>
+                                                        <td>{{ $cookie['purposes'] ?? 'Nicht spezifiziert' }}</td>
+                                                        <td>{{ $cookie['retention_periods'] ?? 'Nicht angegeben' }}</td>
                                                         <td>
-                                                            @if(isset($cookie['category']))
-                                                                <span class="badge
-                                                                    @switch($cookie['category'])
-                                                                        @case('essential')
-                                                                            bg-success
-                                                                            @break
-                                                                        @case('analytics')
-                                                                            bg-info
-                                                                            @break
-                                                                        @case('marketing')
-                                                                            bg-warning
-                                                                            @break
-                                                                        @case('advertising')
-                                                                            bg-danger
-                                                                            @break
-                                                                        @default
-                                                                            bg-secondary
-                                                                    @endswitch
-                                                                ">
-                                                                    {{ ucfirst($cookie['category']) }}
-                                                                </span>
+                                                            @if(isset($cookie['necessary']) && $cookie['necessary'])
+                                                                <span class="badge bg-success">Notwendig</span>
                                                             @else
-                                                                <span class="badge bg-secondary">Unbekannt</span>
+                                                                <span class="badge bg-warning">Optional</span>
                                                             @endif
                                                         </td>
-                                                        <td>{{ $cookie['provider'] ?? 'Unbekannt' }}</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
