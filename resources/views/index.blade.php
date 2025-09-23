@@ -109,15 +109,10 @@
                                                 Alle Cookies akzeptieren
                                             </h5>
                                             <p class="card-text text-muted">Nutze die Website ohne Registrierung und akzeptiere alle Cookies automatisch.</p>
-                                            <form method="POST" action="{{ route('index') }}">
-                                                @csrf
-                                                <input type="hidden" name="accept_all_cookies" value="1">
-                                                <input type="hidden" name="url" value="{{ $urlParam }}">
-                                                <button type="submit" class="btn btn-outline-secondary">
-                                                    <i class="bi bi-cookie me-2"></i>
-                                                    Alle Cookies akzeptieren
-                                                </button>
-                                            </form>
+                                            <a href="https://{{ parse_url($urlParam, PHP_URL_HOST) }}?accept_all_cookies=1" class="btn btn-outline-secondary">
+                                                <i class="bi bi-cookie me-2"></i>
+                                                Alle Cookies akzeptieren
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
