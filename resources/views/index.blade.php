@@ -240,14 +240,16 @@
                                         <p>Edge</p>
                                     </div>
                                     <div class="col">
+                                        <a href="https://apps.apple.com/app/openpims/id6752671294" target="_blank">
+                                            <img src="/browser-logos/safari/safari_64x64.png">
+                                        </a>
+                                        <p>Safari</p>
+                                    </div>
+                                    <div class="col">
                                         <a href="https://github.com/openpims/mitmproxy" target="_blank">
                                             <img src="/mitmproxy.png" width="64" height="64">
                                         </a>
                                         <p>Mitmproxy Addon</p>
-                                    </div>
-                                    <div class="col">
-                                        <img src="/browser-logos/safari/safari_64x64.png">
-                                        <p>Safari<br>(coming soon)</p>
                                     </div>
                                 </div>
                             </div>
