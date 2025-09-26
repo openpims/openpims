@@ -1,8 +1,8 @@
 # OpenPIMS
 
-OpenPIMS ist ein Entwurf für ein Personal Information Management System auf openSource-Basis.
+OpenPIMS 2.0 ist eine Open-Source-Referenzimplementierung für das Telekommunikation-Digitale-Dienste-Datenschutz-Gesetz (TDDDG), die Cookie-Banner überflüssig macht und die digitale Selbstbestimmung stärkt.
 
-Es besteht aus einem zentralen Server und aktuell einem Browser-Plugin für Chrome.
+Das System umfasst eine zentrale Infrastruktur mit Browser-Erweiterungen für Chrome, Firefox, Edge und Safari sowie Integrationen für Cloudflare Worker und WordPress.
 
 ```mermaid
   graph LR;
