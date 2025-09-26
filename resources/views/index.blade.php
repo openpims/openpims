@@ -31,15 +31,15 @@
             <div class="col-md-12">
                 <div class="card mb-3" style="border-color: orange;">
                     <div class="card-header">
-                        <h1>{{ __("OpenPIMS: Keine Cookie-Banner mehr") }}</h1>
+                        <h1><b>Deine</b> Daten, <b>Deine</b> Entscheidung</h1>
                     </div>
                     <div class="card-body">
-                        OpenPIMS erlaubt die zentrale Verwaltung von Cookie-Bannern für alle Deine Websites,
-                        reduziert Zeit- und Kostenaufwand durch automatisierte Einstellungen, garantiert ein
-                        konsistentes Nutzererlebnis und erfüllt dank seiner
-                        <a href="https://github.com/openpims" target="_blank">Open Source-Basis</a> die im
-                        <a href="https://dejure.org/gesetze/TDDDG/26.html" target="_blank">TDDDG § 26-Gesetz</a>
-                        festgelegten Compliance- und Transparenzanforderungen.
+                        OpenPIMS gibt Dir die Kontrolle zurück.
+                        Cookie-Einstellungen einmal pro Website festlegen und dauerhaft speichern –
+                        für echte digitale Selbstbestimmung.
+                        <br>
+                        Kostenlos, transparent und <a href="https://dejure.org/gesetze/TDDDG/26.html" target="_blank">TDDDG-konform</a> dank
+                        <a href="https://github.com/openpims" target="_blank">Open Source</a>.
                     </div>
                 </div>
 
