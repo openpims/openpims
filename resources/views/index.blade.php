@@ -31,7 +31,7 @@
             <div class="col-md-12">
                 <div class="card mb-3" style="border-color: orange;">
                     <div class="card-header">
-                        <h1>{{ __("OpenPIMS: (Fast) keine Cookie-Banner mehr") }}</h1>
+                        <h1>{{ __("OpenPIMS: Keine Cookie-Banner mehr") }}</h1>
                     </div>
                     <div class="card-body">
                         OpenPIMS erlaubt die zentrale Verwaltung von Cookie-Bannern für alle Deine Websites,
