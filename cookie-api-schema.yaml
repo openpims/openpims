@@ -1,0 +1,58 @@
+openapi: 3.1.0
+info:
+  title: Cookie Management API
+  version: 1.0.0
+  description: API schema for managing cookie preferences and configurations
+paths:
+  /cookies:
+    get:
+      summary: Get all cookie configurations
+      operationId: getCookies
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CookieList'
+
+components:
+  schemas:
+    CookieList:
+      type: array
+      description: Array of cookie configuration objects
+      items:
+        $ref: '#/components/schemas/CookieItem'
+      minItems: 0
+      example:
+        - cookie: "aac"
+          checked: 1
+        - cookie: "mobdetect"
+          checked: 1
+        - cookie: "DSID, IDE, HSID"
+          checked: 0
+    
+    CookieItem:
+      type: object
+      description: Individual cookie configuration entry
+      additionalProperties: false
+      required:
+        - cookie
+        - checked
+      properties:
+        cookie:
+          type: string
+          description: Cookie name or comma-separated list of cookie names
+          minLength: 1
+          examples:
+            - "aac"
+            - "cookiepref, cookiepref_ext"
+            - "DSID, IDE, HSID, NID, CONSENT"
+        checked:
+          type: integer
+          description: Cookie consent status (1 = accepted, 0 = rejected)
+          enum: [0, 1]
+          default: 0
+          examples:
+            - 1
+            - 0
