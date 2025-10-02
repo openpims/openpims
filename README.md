@@ -1,6 +1,6 @@
 # OpenPIMS
 
-OpenPIMS 2.0 is an open-source reference implementation for the German Telecommunications-Digital-Services-Data-Protection-Act (TDDDG) that makes cookie banners obsolete and strengthens digital self-determination.
+OpenPIMS 2.0 is an open-source reference implementation for the German Telecommunications-Digital-Services-Data-Protection-Act (TDDDG) that provides a centralized consent management system for web cookies and strengthens digital self-determination.
 
 The system includes a central infrastructure with browser extensions for Chrome, Firefox, Edge, and Safari, as well as integrations for Cloudflare Worker and WordPress.
 
