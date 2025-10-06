@@ -12,6 +12,45 @@ use Illuminate\Support\Facades\Log;
 class ApiController extends Controller
 {
     /**
+     * Identify user from deterministic 32-bit token
+     */
+    private function identifyUser(string $subdomainToken, string $requestingDomain): ?User
+    {
+        $today = intval(floor(time() / 86400));
+
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $input = "{$user->user_id}{$requestingDomain}{$today}";
+            $expectedToken = substr(
+                hash_hmac('sha256', $input, $user->token),
+                0,
+                32
+            );
+
+            if ($expectedToken === $subdomainToken) {
+                return $user;
+            }
+        }
+
+        $yesterday = $today - 1;
+        foreach ($users as $user) {
+            $input = "{$user->user_id}{$requestingDomain}{$yesterday}";
+            $expectedToken = substr(
+                hash_hmac('sha256', $input, $user->token),
+                0,
+                32
+            );
+
+            if ($expectedToken === $subdomainToken) {
+                return $user;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Show the profile for a given user.
      */
     public function index(Request $request, string $token)
@@ -30,8 +69,9 @@ class ApiController extends Controller
             $site = Site::where('url', $url)->first();
             if ($site instanceof Site) {
 
-                //get user
-                $user = User::where('token', $token)->first();
+                //get user via deterministic token
+                $requestingDomain = parse_url($url, PHP_URL_HOST);
+                $user = $this->identifyUser($token, $requestingDomain);
                 if ($user instanceof User) {
 
                     //load consent
@@ -46,9 +86,6 @@ class ApiController extends Controller
                         $site->site_id
                     );
                     $cookies = DB::select($sql);
-                    //foreach (DB::select($sql) as $cookie) {
-                        //$cookies[$cookie->cookie] = $cookie->checked;
-                    //}
 
                     //Log user_sites Last visit
                     Visit::updateOrCreate([

@@ -87,12 +87,22 @@ class HomeController extends Controller
         $sites = DB::select($sql);
 
         //check for necessary extension and correct setup
+        // Generate deterministic token for host subdomain
+        $today = intval(floor(time() / 86400));
+        $appDomain = parse_url(env('APP_URL'), PHP_URL_HOST);
+        $input = Auth::user()->user_id . $appDomain . $today;
+        $deterministicToken = substr(
+            hash_hmac('sha256', $input, Auth::user()->token),
+            0,
+            32
+        );
+
         $host = str_replace([
             'http://',
             'https://'
         ], [
-            'http://'.Auth::user()->token.'.',
-            'https://'.Auth::user()->token.'.'
+            'http://' . $deterministicToken . '.',
+            'https://' . $deterministicToken . '.'
         ], env('APP_URL'));
 
         $extension_installed = false;
@@ -100,10 +110,10 @@ class HomeController extends Controller
         $headers = array_change_key_case(getallheaders(), CASE_LOWER);
         if(array_key_exists('x-openpims', $headers)) {
 
-            //extension installiert
+            // extension installed
             $extension_installed = true;
 
-            //url vergleichen
+            // compare URL
             if ($headers['x-openpims'] == $host) {
                 $valid_url = true;
             }

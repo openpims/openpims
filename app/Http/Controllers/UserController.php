@@ -26,7 +26,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if (Auth::user()->user_id!=1) {
-            dd('du kommst hier nicht rein');
+            dd('you are not allowed in here');
         }
 
         return view('user', [

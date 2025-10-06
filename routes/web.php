@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 
 
 Route::group([
-    'domain' => App::environment('local') ? 'openpims.test' : env('APP_DOMAIN')
+    'domain' => env('APP_DOMAIN')
 ], function () {
     Route::get('/', function (Request $request) {
         if (Auth::check()) {
@@ -151,7 +151,7 @@ Route::group([
 });
 
 Route::group([
-    'domain' => App::environment('local') ? 'me.openpims.test' : 'me.' . env('APP_DOMAIN')
+    'domain' => 'me.' . env('APP_DOMAIN')
 ], function () {
     Route::get('/', function (Request $request) {
         $username = $request->getUser();
@@ -163,21 +163,16 @@ Route::group([
             return response('Unauthorized', 401, ['WWW-Authenticate' => 'Basic']);
         }
 
-        // Benutzer für die Dauer des Requests setzen
-        //Auth::setUser($user);
-
-        if (App::environment('local')) {
-            return sprintf("https://%s.openpims.test", $user->token);
-        } else {
-            return sprintf("https://%s.%s", $user->token, env('APP_DOMAIN'));
-        }
-
-        //return response()->json($user);
+        return response()->json([
+            'userId' => $user->user_id,
+            'token' => $user->token,
+            'domain' => env('APP_DOMAIN')
+        ]);
     });
 });
 
 Route::group([
-    'domain' => App::environment('local') ? '{token}.openpims.test' : '{token}.' . env('APP_DOMAIN')
+    'domain' => '{token}.' . env('APP_DOMAIN')
 ], function () {
     Route::resource('/', ApiController::class)->names('api');
 });

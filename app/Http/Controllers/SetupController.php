@@ -24,12 +24,22 @@ class SetupController extends Controller
      */
     public function index(Request $request)
     {
+        // Generate deterministic token for host subdomain
+        $today = intval(floor(time() / 86400));
+        $appDomain = parse_url(env('APP_URL'), PHP_URL_HOST);
+        $input = Auth::user()->user_id . $appDomain . $today;
+        $deterministicToken = substr(
+            hash_hmac('sha256', $input, Auth::user()->token),
+            0,
+            32
+        );
+
         $host = str_replace([
             'http://',
             'https://'
         ], [
-            'http://'.Auth::user()->token.'.',
-            'https://'.Auth::user()->token.'.'
+            'http://' . $deterministicToken . '.',
+            'https://' . $deterministicToken . '.'
         ], env('APP_URL'));
 
         $extension = false;
@@ -37,10 +47,10 @@ class SetupController extends Controller
         $headers = array_change_key_case(getallheaders(), CASE_LOWER);
         if(array_key_exists('x-openpims', $headers)) {
 
-            //extension installiert
+            // extension installed
             $extension = true;
 
-            //url vergleichen
+            // compare URL
             if ($headers['x-openpims'] == $host) {
                 $valid_url = true;
             }
@@ -56,7 +66,7 @@ class SetupController extends Controller
             ]);
         }
 
-        //setup erledigt
+        // setup completed
         //if ($request->has('setup')) {
         //    Auth::user()->update([
         //        'setup' => $request->get('setup')

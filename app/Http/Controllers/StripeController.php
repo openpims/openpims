@@ -33,10 +33,10 @@ class StripeController extends Controller
                     'price_data' => [
                         'currency' => 'eur',
                         'product_data' => [
-                            'name' => 'OpenPIMS Monatliche Subscription',
-                            'description' => 'Monatlicher Zugang zu OpenPIMS',
+                            'name' => 'OpenPIMS Monthly Subscription',
+                            'description' => 'Monthly access to OpenPIMS',
                         ],
-                        'unit_amount' => 999, // 9.99 EUR in Cent
+                        'unit_amount' => 999, // 9.99 EUR in cents
                         'recurring' => [
                             'interval' => 'month',
                         ],
@@ -53,7 +53,7 @@ class StripeController extends Controller
             return redirect($session->url);
         } catch (\Exception $e) {
             Log::error('Stripe Checkout Session Error: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['stripe' => 'Fehler beim Erstellen der Checkout-Session.']);
+            return redirect()->back()->withErrors(['stripe' => 'Error creating checkout session.']);
         }
     }
 
@@ -62,7 +62,7 @@ class StripeController extends Controller
         $sessionId = $request->get('session_id');
         
         if (!$sessionId) {
-            return redirect()->route('home')->withErrors(['stripe' => 'Ungültige Session-ID.']);
+            return redirect()->route('home')->withErrors(['stripe' => 'Invalid session ID.']);
         }
 
         try {
@@ -75,19 +75,19 @@ class StripeController extends Controller
                 $user->subscription_id = $session->subscription;
                 $user->save();
                 
-                return redirect()->route('home')->with('success', 'Subscription erfolgreich aktiviert!');
+                return redirect()->route('home')->with('success', 'Subscription successfully activated!');
             }
             
-            return redirect()->route('home')->withErrors(['stripe' => 'Zahlung nicht erfolgreich.']);
+            return redirect()->route('home')->withErrors(['stripe' => 'Payment not successful.']);
         } catch (\Exception $e) {
             Log::error('Stripe Success Error: ' . $e->getMessage());
-            return redirect()->route('home')->withErrors(['stripe' => 'Fehler beim Verarbeiten der Zahlung.']);
+            return redirect()->route('home')->withErrors(['stripe' => 'Error processing payment.']);
         }
     }
 
     public function cancel()
     {
-        return redirect()->route('home')->with('info', 'Subscription wurde abgebrochen. Du kannst es jederzeit erneut versuchen.');
+        return redirect()->route('home')->with('info', 'Subscription was cancelled. You can try again at any time.');
     }
 
     public function webhook(Request $request)
