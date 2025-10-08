@@ -45,7 +45,7 @@
                                                 <p>Chrome</p>
                                             </div>
                                             <div class="col">
-                                                <a href="https://addons.mozilla.org/de/firefox/addon/openpims/" target="_blank">
+                                                <a href="https://addons.mozilla.org/addon/openpims" target="_blank">
                                                     <img src="/browser-logos/firefox/firefox_64x64.png">
                                                 </a>
                                                 <p>Firefox</p>
