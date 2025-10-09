@@ -63,6 +63,12 @@
                                                 <p>Safari</p>
                                             </div>
                                             <div class="col">
+                                                <a href="https://apps.apple.com/app/openpims-mobil/id6752672591" target="_blank">
+                                                    <img src="/browser-logos/safari-ios/safari-ios_64x64.png">
+                                                </a>
+                                                <p>Safari iOS</p>
+                                            </div>
+                                            <div class="col">
                                                 <a href="https://github.com/openpims/mitmproxy" target="_blank">
                                                     <img src="/mitmproxy.png" width="64" height="64">
                                                 </a>

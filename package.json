@@ -16,6 +16,7 @@
         "@browser-logos/firefox": "^3.0.10",
         "@browser-logos/opera": "^1.1.11",
         "@browser-logos/safari": "^2.1.0",
+        "@browser-logos/safari-ios": "^1.0.15",
         "@browser-logos/web": "^3.0.1",
         "bootstrap": "^5.2.3",
         "bootstrap-icons": "^1.10.4",
