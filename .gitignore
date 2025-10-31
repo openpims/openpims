@@ -17,3 +17,5 @@ yarn-error.log
 /.idea
 /.vscode
 CLAUDE.md
+.DS_Store
+.claude/

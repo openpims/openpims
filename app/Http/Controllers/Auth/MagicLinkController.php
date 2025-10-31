@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rule;
 
 class MagicLinkController extends Controller
 {
@@ -22,51 +22,30 @@ class MagicLinkController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
+            'cf-turnstile-response' => ['required', Rule::turnstile()],
         ]);
 
         $user = User::where('email', $request->email)->first();
         $url = $request->input('url');
 
         if (!$user) {
-            // Create new user for registration
+            // Create new user for registration (passwordless)
             $user = User::create([
                 'email' => $request->email,
                 'password' => null,
+                'email_verified_at' => now(), // Auto-verify via magic link
             ]);
 
-            // Send registration magic link
-            $this->sendRegistrationMagicLink($user, $url);
+            // Send login magic link (no password setup needed)
+            $this->sendLoginMagicLink($user, $url);
 
-            return back()->with('status', 'Registrierung erfolgreich! Bitte überprüfen Sie Ihre E-Mails und klicken Sie auf den Link, um Ihr Passwort zu setzen.');
+            return back()->with('status', 'Willkommen! Ein Login-Link wurde an Ihre E-Mail-Adresse gesendet.');
         } else {
             // Send login magic link
             $this->sendLoginMagicLink($user, $url);
 
             return back()->with('status', 'Ein Login-Link wurde an Ihre E-Mail-Adresse gesendet.');
         }
-    }
-
-    /**
-     * Send registration magic link
-     */
-    private function sendRegistrationMagicLink(User $user, $originalUrl = null)
-    {
-        $parameters = ['user' => $user->user_id];
-        if ($originalUrl) {
-            $parameters['url'] = $originalUrl;
-        }
-
-        $url = URL::temporarySignedRoute(
-            'auth.set-password',
-            now()->addMinutes(120), // Extended to 2 hours
-            $parameters
-        );
-
-        // Send email with magic link for password setting
-        Mail::send('emails.set-password', ['url' => $url, 'user' => $user], function ($message) use ($user) {
-            $message->to($user->email)
-                    ->subject('Setzen Sie Ihr Passwort - OpenPIMS');
-        });
     }
 
     /**
@@ -93,104 +72,6 @@ class MagicLinkController extends Controller
     }
 
     /**
-     * Show password setting form
-     */
-    public function showSetPasswordForm(Request $request, User $user)
-    {
-        if (!$request->hasValidSignature()) {
-            // Log detailed information for debugging
-            Log::warning('Invalid signature for password setting form', [
-                'user_id' => $user->user_id,
-                'email' => $user->email,
-                'request_url' => $request->fullUrl(),
-                'request_method' => $request->method(),
-                'expires' => $request->query('expires'),
-                'signature' => $request->query('signature'),
-                'current_time' => now()->timestamp,
-                'user_agent' => $request->userAgent(),
-            ]);
-
-            $redirectUrl = '/';
-            if ($request->query('url')) {
-                $redirectUrl .= '?url=' . urlencode($request->query('url'));
-            }
-
-            return redirect($redirectUrl)
-                ->with('error', 'Der Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen Link an, indem Sie sich erneut registrieren oder anmelden.');
-        }
-
-        $originalUrl = $request->query('url');
-        return view('auth.set-password', compact('user', 'originalUrl'));
-    }
-
-    /**
-     * Set password for new user
-     */
-    public function setPassword(Request $request, User $user)
-    {
-        // For POST requests, signature parameters come from form data, not query string
-        $expires = $request->input('expires') ?: $request->query('expires');
-        $signature = $request->input('signature') ?: $request->query('signature');
-
-        // Create a temporary request with query parameters for signature validation
-        $validationRequest = clone $request;
-        if ($request->isMethod('POST') && $expires && $signature) {
-            // For POST requests, we need to validate against the original GET URL
-            $originalUrl = $request->url() . '?' . http_build_query([
-                'expires' => $expires,
-                'signature' => $signature
-            ]);
-            $validationRequest = Request::create($originalUrl, 'GET');
-        }
-
-        if (!$validationRequest->hasValidSignature()) {
-            // Log detailed information for debugging
-            Log::warning('Invalid signature for password setting', [
-                'user_id' => $user->user_id,
-                'email' => $user->email,
-                'request_url' => $request->fullUrl(),
-                'request_method' => $request->method(),
-                'expires' => $expires,
-                'signature' => $signature,
-                'current_time' => now()->timestamp,
-                'user_agent' => $request->userAgent(),
-                'validation_url' => $validationRequest->fullUrl(),
-            ]);
-
-            $redirectUrl = '/';
-            $originalUrl = $request->input('url') ?: $request->query('url');
-            if ($originalUrl) {
-                $redirectUrl .= '?url=' . urlencode($originalUrl);
-            }
-
-            return redirect($redirectUrl)
-                ->with('error', 'Der Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen Link an, indem Sie sich erneut registrieren oder anmelden.');
-        }
-
-        $request->validate([
-            'password' => ['required', 'confirmed', Password::defaults()],
-        ]);
-
-        $user->update([
-            'password' => Hash::make($request->password),
-            'email_verified_at' => now(),
-        ]);
-
-        Auth::login($user);
-
-        // Send welcome email with token instructions
-        $this->sendWelcomeEmail($user);
-
-        $redirectUrl = '/';
-        $originalUrl = $request->input('url') ?: $request->query('url');
-        if ($originalUrl) {
-            $redirectUrl .= '?url=' . urlencode($originalUrl);
-        }
-
-        return redirect($redirectUrl)->with('status', 'Ihr Passwort wurde erfolgreich gesetzt und Sie sind jetzt angemeldet!');
-    }
-
-    /**
      * Magic link login
      */
     public function magicLogin(Request $request, User $user)
@@ -208,13 +89,14 @@ class MagicLinkController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            $redirectUrl = '/';
-            if ($request->query('url')) {
-                $redirectUrl .= '?url=' . urlencode($request->query('url'));
-            }
+            return redirect('/login')
+                ->with('error', 'Der Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen Link an.');
+        }
 
-            return redirect($redirectUrl)
-                ->with('error', 'Der Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen Link an, indem Sie sich erneut registrieren oder anmelden.');
+        // Email verification through magic link
+        if (!$user->email_verified_at) {
+            $user->email_verified_at = now();
+            $user->save();
         }
 
         Auth::login($user);
@@ -224,17 +106,6 @@ class MagicLinkController extends Controller
             $redirectUrl .= '?url=' . urlencode($request->query('url'));
         }
 
-        return redirect($redirectUrl)->with('status', 'Sie wurden erfolgreich angemeldet!');
-    }
-
-    /**
-     * Send welcome email with extension instructions
-     */
-    private function sendWelcomeEmail(User $user)
-    {
-        Mail::send('emails.welcome', ['user' => $user], function ($message) use ($user) {
-            $message->to($user->email)
-                    ->subject('Willkommen bei OpenPIMS - Installationsanleitung');
-        });
+        return redirect($redirectUrl)->with('status', 'Erfolgreich angemeldet!');
     }
 }

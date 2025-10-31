@@ -228,6 +228,20 @@
                                         <p>Chrome</p>
                                     </div>
                                     <div class="col">
+                                        <a href="https://chromewebstore.google.com/detail/openpims/pgffgdajiokgdighlhahihihkgphlcnc"
+                                           target="_blank">
+                                            <img src="/browser-logos/brave/brave_64x64.png">
+                                        </a>
+                                        <p>Brave</p>
+                                    </div>
+                                    <div class="col">
+                                        <a href="https://chromewebstore.google.com/detail/openpims/pgffgdajiokgdighlhahihihkgphlcnc"
+                                           target="_blank">
+                                            <img src="/browser-logos/opera/opera_64x64.png">
+                                        </a>
+                                        <p>Opera</p>
+                                    </div>
+                                    <div class="col">
                                         <a href="https://addons.mozilla.org/addon/openpims" target="_blank">
                                             <img src="/browser-logos/firefox/firefox_64x64.png">
                                         </a>

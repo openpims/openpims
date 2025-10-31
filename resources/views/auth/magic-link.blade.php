@@ -5,10 +5,24 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+                <div class="card-header">{{ __('Login / Registrierung') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+                    @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    <p>Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Login-Link.</p>
+
+                    <form method="POST" action="{{ route('auth.send-magic-link') }}">
                         @csrf
                         @if(request()->has('url'))
                             <input type="hidden" name="url" value="{{ request()->input('url') }}">
@@ -29,20 +43,6 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
                             <label for="" class="col-md-4 col-form-label text-md-end"></label>
                             <div class="col-md-6">
                                 <x-turnstile />
@@ -55,17 +55,21 @@
                         <div class="row mb-0">
                             <div class="col-md-8 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
+                                    {{ __('Magic Link senden') }}
                                 </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
                             </div>
                         </div>
                     </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <small class="text-muted">
+                            <strong>Kein Passwort erforderlich!</strong><br>
+                            Sie erhalten einen sicheren Login-Link per E-Mail.<br>
+                            Bei neuen E-Mail-Adressen wird automatisch ein Account erstellt.
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>

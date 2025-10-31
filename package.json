@@ -11,13 +11,13 @@
         "build": "mix --production"
     },
     "devDependencies": {
+d        "@browser-logos/brave": "^3.0.13",
         "@browser-logos/chrome": "^2.0.0",
         "@browser-logos/edge": "^2.0.7",
         "@browser-logos/firefox": "^3.0.10",
         "@browser-logos/opera": "^1.1.11",
         "@browser-logos/safari": "^2.1.0",
         "@browser-logos/safari-ios": "^1.0.15",
-        "@browser-logos/web": "^3.0.1",
         "bootstrap": "^5.2.3",
         "bootstrap-icons": "^1.10.4",
         "bootstrap-select": "^1.14.0-beta3",

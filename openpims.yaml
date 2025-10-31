@@ -1,7 +1,21 @@
 openapi: 3.1.0
 info:
   title: OpenPIMS Cookie Definition Schema
-  version: 1.0.0
+  version: 2.0.0
+  description: |
+    OpenAPI schema for website cookie definition files (openpims.json).
+
+    This schema defines the structure that websites must use to declare their cookies
+    for integration with OpenPIMS (Privacy & Information Management System).
+
+    **3-Tier Consent Model:**
+    OpenPIMS supports a hierarchical consent system:
+    1. **Category-Level** (Tier 1): User accepts/rejects entire categories (e.g., "all analytics")
+    2. **Provider-Level** (Tier 2): User accepts/rejects specific providers (e.g., "Google Analytics" but not "Matomo")
+    3. **Cookie-Level** (Tier 3): User accepts/rejects individual cookies (e.g., "_ga" but not "_gid")
+
+    Priority: Cookie-Level > Provider-Level > Category-Level > Default (functional=allow, others=deny)
+
 components:
   schemas:
     CookieDefinition:
@@ -13,55 +27,86 @@ components:
       properties:
         site:
           type: string
+          description: Name of the website/service
+          example: "Example Website"
         cookies:
           type: array
+          description: List of cookies used by the website
           items:
             $ref: '#/components/schemas/Cookie'
       example:
-        site: PopSet
+        site: "Example Website"
         cookies:
-          - cookie: functional
+          - cookie: "session_id"
             necessary: true
-            purpose: a
-            provider: b
-            retention: 1
-            data_stored: d
-            revocation_info: e
-          - cookie: counter
-            purpose: a
-            provider: b
-            retention: 10
-            data_stored: d
-            revocation_info: e
+            category: "functional"
+            providers: "Example Inc."
+            data_stored: "Session identifier"
+            purposes: "User authentication"
+            retention_periods: "24 hours"
+            revocation_info: "Logout or clear browser cookies"
+          - cookie: "_ga"
+            necessary: false
+            category: "analytics"
+            providers: "Google Analytics"
+            data_stored: "Anonymous usage statistics"
+            purposes: "Website optimization, analytics"
+            retention_periods: "2 years"
+            revocation_info: "Disable in cookie preferences or browser settings"
+
     Cookie:
       type: object
       additionalProperties: false
       required:
         - cookie
-        - purpose
-        - provider
-        - retention
-        - data_stored
-        - revocation_info
+        - necessary
       properties:
         cookie:
           type: string
-          description: Cookie-Name.
+          description: Cookie name
+          example: "session_id"
         necessary:
           type: boolean
-          description: Gibt an, ob das Cookie unbedingt erforderlich ist.
-        purpose:
+          description: |
+            Whether the cookie is technically necessary (true) or optional (false).
+            Necessary cookies are always allowed per TDDDG §25 Abs. 2.
+          example: true
+        category:
           type: string
-          description: Kurze Beschreibung des Cookie-Zwecks.
-        provider:
+          description: |
+            Cookie category for consent management.
+            Used in OpenPIMS 3-Tier Consent System (Category-Level).
+            Aligned with Open Cookie Database standard.
+          enum:
+            - functional
+            - personalization
+            - analytics
+            - marketing
+          example: "functional"
+          default: "functional"
+        providers:
           type: string
-          description: Die Entität, die das Cookie setzt (z.B. die Website oder ein Drittanbieter).
-        retention:
-          type: integer
-          description: Aufbewahrungsdauer (z.B. Anzahl der Tage).
+          description: |
+            Provider(s) or service provider(s) of the cookie.
+            Used in OpenPIMS 3-Tier Consent System (Provider-Level).
+            Can be comma-separated for multiple providers.
+          example: "Google Analytics"
         data_stored:
           type: string
-          description: Welche Art von Daten im Cookie gespeichert werden.
+          description: Description of what data is stored in the cookie
+          example: "User session identifier, login state"
+        purposes:
+          type: string
+          description: Purpose(s) of the cookie (plural for multiple purposes)
+          example: "Authentication, session management"
+        retention_periods:
+          type: string
+          description: Retention period(s) of the cookie (plural for multiple periods)
+          example: "30 days, until browser close"
         revocation_info:
           type: string
-          description: Wie der Benutzer die Einwilligung widerrufen oder das Cookie deaktivieren kann.
+          description: Information on how to revoke consent or delete the cookie
+          example: "Delete cookies in browser settings or logout"
+
+# Note: This is the official OpenPIMS Cookie Definition Schema (v2.0.0)
+# and represents the expected format for openpims.json files served by websites.

@@ -6,6 +6,8 @@ use App\Models\Cookie;
 use App\Models\Site;
 use App\Models\Vendor;
 use App\Models\Consent;
+use App\Models\ConsentCategory;
+use App\Models\ConsentProvider;
 use App\Models\Standard;
 use App\Models\Visit;
 use Illuminate\Http\Request;
@@ -43,19 +45,60 @@ class HomeController extends Controller
             }
         }
 
-        //Load cookies
+        //Load cookies and consents (3-Tier Model)
         $cookies = [];
+        $cookiesByCategory = [];
+        $cookiesByProvider = [];
+        $categoryConsents = [];
+        $providerConsents = [];
+
         if ($site instanceof Site) {
+            // Get all cookies for this site with their consents
             $sql = sprintf("
-                SELECT *
-                FROM cookies
-                LEFT JOIN consents USING (cookie_id)
-                WHERE site_id=%d
+                SELECT c.*, con.consent_status as cookie_consent
+                FROM cookies c
+                LEFT JOIN consents con ON c.cookie_id = con.cookie_id AND con.user_id = %d
+                WHERE c.site_id = %d
+                ORDER BY c.category, c.provider, c.cookie
             ",
-                $site->site_id,
-                Auth::user()->user_id
+                Auth::user()->user_id,
+                $site->site_id
             );
             $cookies = DB::select($sql);
+
+            // Group cookies by category for UI
+            foreach ($cookies as $cookie) {
+                if (!isset($cookiesByCategory[$cookie->category])) {
+                    $cookiesByCategory[$cookie->category] = [];
+                }
+                $cookiesByCategory[$cookie->category][] = $cookie;
+
+                // Also group by provider
+                $normalizedProvider = ConsentProvider::normalizeProvider($cookie->provider ?? 'Unknown');
+                $providerKey = $cookie->category . '|' . $normalizedProvider;
+                if (!isset($cookiesByProvider[$providerKey])) {
+                    $cookiesByProvider[$providerKey] = [
+                        'category' => $cookie->category,
+                        'provider' => $normalizedProvider,
+                        'cookies' => []
+                    ];
+                }
+                $cookiesByProvider[$providerKey]['cookies'][] = $cookie;
+            }
+
+            // Get category-level consents
+            $categoryConsents = ConsentCategory::where('user_id', Auth::user()->user_id)
+                ->where('site_id', $site->site_id)
+                ->get()
+                ->keyBy('category');
+
+            // Get provider-level consents
+            $providerConsents = ConsentProvider::where('user_id', Auth::user()->user_id)
+                ->where('site_id', $site->site_id)
+                ->get()
+                ->keyBy(function($item) {
+                    return $item->category . '|' . $item->provider;
+                });
 
             //Log user_sites Last visit
             Visit::updateOrCreate([
@@ -68,11 +111,11 @@ class HomeController extends Controller
 
         //load all visited sites
         $sql = sprintf("
-            SELECT 
-                v.site_id, 
+            SELECT
+                v.site_id,
                 s.site,
-                COALESCE(SUM(CASE WHEN c.necessary = 1 AND con.checked = 1 THEN 1 ELSE 0 END), 0) as necessary_count,
-                COALESCE(SUM(CASE WHEN c.necessary = 0 AND con.checked = 1 THEN 1 ELSE 0 END), 0) as voluntary_count
+                COALESCE(SUM(CASE WHEN c.necessary = 1 AND con.consent_status = 1 THEN 1 ELSE 0 END), 0) as necessary_count,
+                COALESCE(SUM(CASE WHEN c.necessary = 0 AND con.consent_status = 1 THEN 1 ELSE 0 END), 0) as voluntary_count
             FROM visits v
             JOIN sites s ON v.site_id = s.site_id
             LEFT JOIN cookies c ON s.site_id = c.site_id
@@ -97,7 +140,10 @@ class HomeController extends Controller
             32
         );
 
-        $host = str_replace([
+        // Accept both variants:
+        // 1. With token subdomain: https://token.openpims.test
+        // 2. Without token subdomain: https://openpims.test
+        $hostWithToken = str_replace([
             'http://',
             'https://'
         ], [
@@ -105,33 +151,97 @@ class HomeController extends Controller
             'https://' . $deterministicToken . '.'
         ], env('APP_URL'));
 
+        $hostWithoutToken = env('APP_URL');
+
         $extension_installed = false;
         $valid_url = false;
         $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+
+        // Extract OpenPIMS URL from either X-OpenPIMS header or User-Agent
+        $openpimsValue = null;
+
+        // Method 1: Check X-OpenPIMS header (Chrome, Firefox, Chromium)
         if(array_key_exists('x-openpims', $headers)) {
+            $openpimsValue = $headers['x-openpims'];
+        }
 
-            // extension installed
-            $extension_installed = true;
+        // Method 2: Check User-Agent for OpenPIMS signal (Safari, Chromium)
+        if (!$openpimsValue && array_key_exists('user-agent', $headers)) {
+            $userAgent = $headers['user-agent'];
+            // Pattern: OpenPIMS/2.0 () or OpenPIMS/2.0 (https://token.domain.de)
+            if (preg_match('/OpenPIMS\/[\d.]+\s*\(([^)]*)\)/', $userAgent, $matches)) {
+                // Empty parentheses = not-configured, URL in parentheses = configured
+                $openpimsValue = empty($matches[1]) ? 'not-configured' : $matches[1];
+            }
+        }
 
-            // compare URL
-            if ($headers['x-openpims'] == $host) {
-                $valid_url = true;
+        // Check if extension is installed (either "not-configured" or a valid URL)
+        if ($openpimsValue) {
+            if ($openpimsValue === 'not-configured' || filter_var($openpimsValue, FILTER_VALIDATE_URL)) {
+                $extension_installed = true;
+
+                // Check if extension is also logged in (URL matches either variant)
+                if ($openpimsValue == $hostWithToken || $openpimsValue == $hostWithoutToken) {
+                    $valid_url = true;
+                }
             }
         }
 
         $setup_unfinished = !($extension_installed && $valid_url);
+        $setup_complete = $extension_installed && $valid_url;
+
+        // Reset reward session if setup is not complete (user logged out or extension not synced)
+        if ($setup_unfinished && session('setup_reward_seen')) {
+            session()->forget('setup_reward_seen');
+        }
+
+        // Show setup modal if setup is unfinished OR just completed (for the reward screen)
+        $show_setup = $setup_unfinished || ($setup_complete && !session('setup_reward_seen'));
+
+        // Mark reward as seen once displayed
+        if ($setup_complete && $show_setup) {
+            session(['setup_reward_seen' => true]);
+        }
+
+        // Detect user's browser
+        $userAgent = $request->header('User-Agent');
+        $detectedBrowser = 'chrome'; // default
+
+        if (strpos($userAgent, 'Edg/') !== false) {
+            $detectedBrowser = 'edge';
+        } elseif (strpos($userAgent, 'Brave/') !== false || strpos($userAgent, 'Brave') !== false) {
+            $detectedBrowser = 'brave';
+        } elseif (strpos($userAgent, 'OPR/') !== false || strpos($userAgent, 'Opera/') !== false) {
+            $detectedBrowser = 'opera';
+        } elseif (strpos($userAgent, 'Firefox/') !== false) {
+            $detectedBrowser = 'firefox';
+        } elseif (strpos($userAgent, 'iPhone') !== false || strpos($userAgent, 'iPad') !== false) {
+            $detectedBrowser = 'safari-ios';
+        } elseif (strpos($userAgent, 'Safari/') !== false && strpos($userAgent, 'Chrome') === false) {
+            $detectedBrowser = 'safari';
+        } elseif (strpos($userAgent, 'Chrome/') !== false) {
+            $detectedBrowser = 'chrome';
+        }
 
         return view('home', [
             'user' => Auth::user(),
             'sites' => $sites,
             'site' => $site,
             'cookies' => $cookies,
+            'cookiesByCategory' => $cookiesByCategory,
+            'cookiesByProvider' => $cookiesByProvider,
+            'categoryConsents' => $categoryConsents,
+            'providerConsents' => $providerConsents,
+            'categories' => ConsentCategory::CATEGORIES,
             'url' => $url,
             'show_site' => !is_null($url) && $site instanceof Site,
             'extension_installed' => $extension_installed,
             'valid_url' => $valid_url,
             'setup_unfinished' => $setup_unfinished,
-            'host' => $host,
+            'setup_complete' => $setup_complete,
+            'show_setup' => $show_setup,
+            'host' => $hostWithToken,
+            'detected_browser' => $detectedBrowser,
         ]);
     }
 
@@ -148,20 +258,44 @@ class HomeController extends Controller
         $result= curl_exec ($ch);
         curl_close ($ch);
         $array = json_decode($result, true);
-        Log::info($array);
+        Log::info('saveSite() - JSON decoded', ['array' => $array]);
+
+        if (!$array || !isset($array['site']) || !isset($array['cookies'])) {
+            Log::error('saveSite() - Invalid JSON structure', ['array' => $array, 'result' => $result]);
+            throw new \Exception('Invalid cookie definition JSON structure');
+        }
 
         $site = Site::firstOrCreate([
             'site' => $array['site'],
             'url' => $url,
         ]);
         $site_id = $site->site_id;
+        Log::info('saveSite() - Site created/found', ['site_id' => $site_id, 'cookie_count' => count($array['cookies'])]);
 
         foreach ($array['cookies'] as $cookie) {
+            // Auto-detect category if not provided
+            $category = 'functional'; // default
+            if (isset($cookie['category'])) {
+                $category = $cookie['category'];
+            } elseif (isset($cookie['necessary']) && $cookie['necessary']) {
+                $category = 'functional';
+            } elseif (isset($cookie['purposes'])) {
+                // Auto-categorize based on purpose keywords
+                $purposes = strtolower($cookie['purposes']);
+                if (strpos($purposes, 'analytic') !== false || strpos($purposes, 'statistic') !== false) {
+                    $category = 'analytics';
+                } elseif (strpos($purposes, 'marketing') !== false || strpos($purposes, 'advertis') !== false || strpos($purposes, 'track') !== false || strpos($purposes, 'social') !== false || strpos($purposes, 'share') !== false) {
+                    $category = 'marketing';
+                } elseif (strpos($purposes, 'personaliz') !== false || strpos($purposes, 'preference') !== false) {
+                    $category = 'personalization';
+                }
+            }
+
             $sql = sprintf("
-                INSERT IGNORE 
-                INTO cookies (cookie, site_id, necessary, providers, data_stored, purposes, retention_periods, revocation_info, created_at, updated_at)
+                INSERT IGNORE
+                INTO cookies (cookie, site_id, necessary, category, provider, data_stored, purposes, retention_periods, revocation_info, created_at, updated_at)
                 VALUES (
-                   '%s', 
+                   '%s',
                    %d,
                    %d,
                    '%s',
@@ -169,21 +303,34 @@ class HomeController extends Controller
                    '%s',
                    '%s',
                    '%s',
-                   TIMESTAMP(NOW()), 
+                   '%s',
+                   TIMESTAMP(NOW()),
                    TIMESTAMP(NOW())
             )",
                 $cookie['cookie'],
                 $site_id,
                 isset($cookie['necessary']) ? $cookie['necessary'] ? 1 : 0 : 0,
+                $category,
                 isset($cookie['providers']) ? addslashes($cookie['providers']) : '',
                 isset($cookie['data_stored']) ? addslashes($cookie['data_stored']) : '',
                 isset($cookie['purposes']) ? addslashes($cookie['purposes']) : '',
                 isset($cookie['retention_periods']) ? addslashes($cookie['retention_periods']) : '',
                 isset($cookie['revocation_info']) ? addslashes($cookie['revocation_info']) : ''
             );
-            DB::insert($sql);
+
+            try {
+                DB::insert($sql);
+                Log::debug('saveSite() - Cookie inserted', ['cookie' => $cookie['cookie'], 'site_id' => $site_id]);
+            } catch (\Exception $e) {
+                Log::error('saveSite() - Cookie insert failed', [
+                    'cookie' => $cookie['cookie'],
+                    'error' => $e->getMessage(),
+                    'sql' => $sql
+                ]);
+            }
         }
 
+        Log::info('saveSite() - Completed', ['site_id' => $site_id, 'cookies_processed' => count($array['cookies'])]);
         return $site;
     }
 
@@ -200,7 +347,7 @@ class HomeController extends Controller
                 'user_id' => Auth::user()->user_id,
                 'cookie_id' => $cookie->cookie_id,
             ], [
-                'checked' => $cookie->necessary? 1: 0,
+                'consent_status' => $cookie->necessary? 1: 0,
             ]);
         }
 
@@ -209,7 +356,7 @@ class HomeController extends Controller
                 'user_id' => Auth::user()->user_id,
                 'cookie_id' => $consent,
             ], [
-                'checked' => 1,
+                'consent_status' => 1,
             ]);
         }
 
@@ -261,7 +408,7 @@ class HomeController extends Controller
             FROM consents
             JOIN cookies USING (cookie_id)
             JOIN sites USING (site_id)
-            WHERE consents.checked = 1
+            WHERE consents.consent_status = 1
             AND consents.user_id = " . Auth::user()->user_id;
         $consents = DB::select($sql);
 
@@ -303,20 +450,56 @@ class HomeController extends Controller
         $site = Site::find($siteId);
         $cookies = Cookie::where('site_id', $siteId)->get();
 
-        // Get user's current consents for this site
+        // Get user's current cookie-level consents
         $userConsents = Consent::where('user_id', Auth::user()->user_id)
             ->whereIn('cookie_id', $cookies->pluck('cookie_id'))
-            ->pluck('checked', 'cookie_id');
+            ->pluck('consent_status', 'cookie_id');
+
+        // Get user's current category-level consents
+        $categoryConsents = ConsentCategory::where('user_id', Auth::user()->user_id)
+            ->where('site_id', $siteId)
+            ->get()
+            ->keyBy('category')
+            ->toArray();
+
+        // Get user's current provider-level consents
+        $providerConsents = ConsentProvider::where('user_id', Auth::user()->user_id)
+            ->where('site_id', $siteId)
+            ->get()
+            ->keyBy(function($item) {
+                return $item->category . '|' . $item->provider;
+            })
+            ->toArray();
+
+        // Group cookies by provider
+        $cookiesByProvider = [];
+        foreach ($cookies as $cookie) {
+            $normalizedProvider = ConsentProvider::normalizeProvider($cookie->provider ?? 'Unknown');
+            $providerKey = $cookie->category . '|' . $normalizedProvider;
+
+            if (!isset($cookiesByProvider[$providerKey])) {
+                $cookiesByProvider[$providerKey] = [
+                    'category' => $cookie->category,
+                    'provider' => $normalizedProvider,
+                    'cookieCount' => 0
+                ];
+            }
+            $cookiesByProvider[$providerKey]['cookieCount']++;
+        }
 
         // Add checked status to cookies
         $cookies = $cookies->map(function($cookie) use ($userConsents) {
             $cookie->checked = $userConsents->get($cookie->cookie_id, 0) == 1;
+            $cookie->cookie_consent = $cookie->checked; // Alias for backward compatibility
             return $cookie;
         });
 
         return response()->json([
             'site' => $site,
-            'cookies' => $cookies
+            'cookies' => $cookies,
+            'categoryConsents' => $categoryConsents,
+            'providerConsents' => $providerConsents,
+            'cookiesByProvider' => $cookiesByProvider
         ]);
     }
 
@@ -337,7 +520,7 @@ class HomeController extends Controller
                 'user_id' => Auth::user()->user_id,
                 'cookie_id' => $cookie->cookie_id,
             ], [
-                'checked' => $cookie->necessary? 1: 0,
+                'consent_status' => $cookie->necessary? 1: 0,
             ]);
         }
 
@@ -346,7 +529,7 @@ class HomeController extends Controller
                 'user_id' => Auth::user()->user_id,
                 'cookie_id' => $consent,
             ], [
-                'checked' => 1,
+                'consent_status' => 1,
             ]);
         }
 
@@ -400,6 +583,155 @@ class HomeController extends Controller
         }
 
         return redirect()->back()->with('success', 'Cookie preferences saved successfully');
+    }
+
+    /**
+     * Save category-level consents (Tier 1 - Standard Mode)
+     *
+     * This allows users to accept/reject entire categories instead of individual cookies.
+     * Example: Accept all "analytics" cookies, reject all "marketing" cookies
+     */
+    public function saveCategoryConsent(Request $request)
+    {
+        $site_id = $request->input('site_id');
+        $categories = $request->input('categories', []); // ['analytics' => true, 'marketing' => false]
+
+        Log::info('Saving category consents for site: ' . $site_id, $categories);
+
+        foreach ($categories as $category => $checked) {
+            ConsentCategory::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->user_id,
+                    'site_id' => $site_id,
+                    'category' => $category,
+                ],
+                [
+                    'consent_status' => $checked ? 1 : 0,
+                ]
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category preferences saved successfully',
+            'mode' => 'category'
+        ]);
+    }
+
+    /**
+     * Save provider-level consents (Tier 2 - Advanced Mode)
+     *
+     * This allows users to accept/reject specific providers within categories.
+     * Example: Accept "Matomo" but reject "Google Analytics" (both in analytics category)
+     */
+    public function saveProviderConsent(Request $request)
+    {
+        $site_id = $request->input('site_id');
+        $providers = $request->input('providers', []); // ['analytics|Google Analytics' => true, ...]
+
+        Log::info('Saving provider consents for site: ' . $site_id, $providers);
+
+        foreach ($providers as $providerKey => $checked) {
+            // Split the compound key
+            list($category, $provider) = explode('|', $providerKey, 2);
+
+            ConsentProvider::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->user_id,
+                    'site_id' => $site_id,
+                    'category' => $category,
+                    'provider' => $provider,
+                ],
+                [
+                    'consent_status' => $checked ? 1 : 0,
+                ]
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Provider preferences saved successfully',
+            'mode' => 'provider'
+        ]);
+    }
+
+    /**
+     * Save mixed consents (3-Tier Model)
+     *
+     * This supports the 3-Tier model where users can:
+     * 1. Set category-level defaults (e.g., "all analytics = yes")
+     * 2. Override specific providers (e.g., "but Google Analytics = no")
+     * 3. Override specific cookies (e.g., "but _ga = yes")
+     */
+    public function saveMixedConsent(Request $request)
+    {
+        $site_id = $request->input('site_id');
+        $mode = $request->input('mode', 'category'); // 'category', 'provider', or 'cookie'
+        $categories = $request->input('categories', []);
+        $providers = $request->input('providers', []); // provider overrides
+        $cookies = $request->input('cookies', []); // cookie overrides
+
+        Log::info('Saving mixed consents (3-Tier)', [
+            'site_id' => $site_id,
+            'mode' => $mode,
+            'categories' => $categories,
+            'providers' => $providers,
+            'cookies' => $cookies
+        ]);
+
+        // Save category consents (Tier 1)
+        foreach ($categories as $category => $checked) {
+            ConsentCategory::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->user_id,
+                    'site_id' => $site_id,
+                    'category' => $category,
+                ],
+                [
+                    'consent_status' => $checked ? 1 : 0,
+                ]
+            );
+        }
+
+        // Save provider-level overrides (Tier 2)
+        if ($mode === 'provider' || $mode === 'cookie') {
+            foreach ($providers as $providerKey => $checked) {
+                list($category, $provider) = explode('|', $providerKey, 2);
+
+                ConsentProvider::updateOrCreate(
+                    [
+                        'user_id' => Auth::user()->user_id,
+                        'site_id' => $site_id,
+                        'category' => $category,
+                        'provider' => $provider,
+                    ],
+                    [
+                        'consent_status' => $checked ? 1 : 0,
+                    ]
+                );
+            }
+        }
+
+        // Save cookie-level overrides (Tier 3 - most specific)
+        if ($mode === 'cookie' && !empty($cookies)) {
+            foreach ($cookies as $cookie_id => $checked) {
+                Consent::updateOrCreate(
+                    [
+                        'user_id' => Auth::user()->user_id,
+                        'cookie_id' => $cookie_id,
+                    ],
+                    [
+                        'consent_status' => $checked ? 1 : 0,
+                    ]
+                );
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Preferences saved successfully (3-Tier)',
+            'mode' => $mode
+        ]);
     }
 
 }

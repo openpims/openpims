@@ -1,0 +1,125 @@
+{
+  "site": "OpenPIMS Demo Website",
+  "cookies": [
+    {
+      "cookie": "session_id",
+      "necessary": true,
+      "category": "functional",
+      "providers": "OpenPIMS",
+      "data_stored": "Session identifier",
+      "purposes": "User authentication and session management",
+      "retention_periods": "Until browser close",
+      "revocation_info": "Clear browser cookies or logout"
+    },
+    {
+      "cookie": "csrf_token",
+      "necessary": true,
+      "category": "functional",
+      "providers": "OpenPIMS",
+      "data_stored": "CSRF protection token",
+      "purposes": "Security - prevent cross-site request forgery",
+      "retention_periods": "Session",
+      "revocation_info": "Clear browser cookies"
+    },
+    {
+      "cookie": "_ga",
+      "necessary": false,
+      "category": "analytics",
+      "providers": "Google Analytics (Google LLC, USA)",
+      "data_stored": "Anonymized IP, browser info, visit duration",
+      "purposes": "Website usage analytics and optimization",
+      "retention_periods": "2 years",
+      "revocation_info": "Disable in cookie preferences or browser settings"
+    },
+    {
+      "cookie": "_gid",
+      "necessary": false,
+      "category": "analytics",
+      "providers": "Google Analytics (Google LLC, USA)",
+      "data_stored": "User identifier",
+      "purposes": "Distinguish users for analytics",
+      "retention_periods": "24 hours",
+      "revocation_info": "Disable in cookie preferences or browser settings"
+    },
+    {
+      "cookie": "_gat",
+      "necessary": false,
+      "category": "analytics",
+      "providers": "Google Analytics (Google LLC, USA)",
+      "data_stored": "Request throttling information",
+      "purposes": "Limit request rate to Google Analytics",
+      "retention_periods": "1 minute",
+      "revocation_info": "Disable in cookie preferences or browser settings"
+    },
+    {
+      "cookie": "_matomo_session",
+      "necessary": false,
+      "category": "analytics",
+      "providers": "Matomo (self-hosted)",
+      "data_stored": "Session tracking data",
+      "purposes": "Privacy-friendly website analytics",
+      "retention_periods": "30 minutes",
+      "revocation_info": "Disable in cookie preferences"
+    },
+    {
+      "cookie": "_fbp",
+      "necessary": false,
+      "category": "marketing",
+      "providers": "Meta Platforms Inc. (Facebook)",
+      "data_stored": "Browser ID, visited pages",
+      "purposes": "Personalized advertising and retargeting",
+      "retention_periods": "90 days",
+      "revocation_info": "Disable in cookie preferences or Facebook settings"
+    },
+    {
+      "cookie": "fr",
+      "necessary": false,
+      "category": "marketing",
+      "providers": "Meta Platforms Inc. (Facebook)",
+      "data_stored": "User ID, encrypted data",
+      "purposes": "Advertising targeting and measurement",
+      "retention_periods": "90 days",
+      "revocation_info": "Disable in cookie preferences or Facebook settings"
+    },
+    {
+      "cookie": "_gcl_au",
+      "necessary": false,
+      "category": "marketing",
+      "providers": "Google Ads (Google LLC, USA)",
+      "data_stored": "Ad click information",
+      "purposes": "Conversion tracking for Google Ads",
+      "retention_periods": "90 days",
+      "revocation_info": "Disable in cookie preferences or Google settings"
+    },
+    {
+      "cookie": "twitter_share",
+      "necessary": false,
+      "category": "marketing",
+      "providers": "Twitter Inc. (X Corp., USA)",
+      "data_stored": "User interactions with Twitter buttons",
+      "purposes": "Enable Twitter sharing and track engagement",
+      "retention_periods": "2 years",
+      "revocation_info": "Disable in cookie preferences or Twitter settings"
+    },
+    {
+      "cookie": "pref_lang",
+      "necessary": false,
+      "category": "personalization",
+      "providers": "OpenPIMS",
+      "data_stored": "Language preference (de, en, etc.)",
+      "purposes": "Remember user's language choice",
+      "retention_periods": "1 year",
+      "revocation_info": "Clear browser cookies"
+    },
+    {
+      "cookie": "pref_theme",
+      "necessary": false,
+      "category": "personalization",
+      "providers": "OpenPIMS",
+      "data_stored": "Theme preference (light, dark)",
+      "purposes": "Remember user's design preference",
+      "retention_periods": "1 year",
+      "revocation_info": "Clear browser cookies"
+    }
+  ]
+}

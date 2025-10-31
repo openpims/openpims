@@ -46,13 +46,16 @@ class SetupController extends Controller
         $valid_url = false;
         $headers = array_change_key_case(getallheaders(), CASE_LOWER);
         if(array_key_exists('x-openpims', $headers)) {
+            $headerValue = $headers['x-openpims'];
 
-            // extension installed
-            $extension = true;
+            // Check if extension is installed (either "not-configured" or a valid URL)
+            if ($headerValue === 'not-configured' || filter_var($headerValue, FILTER_VALIDATE_URL)) {
+                $extension = true;
 
-            // compare URL
-            if ($headers['x-openpims'] == $host) {
-                $valid_url = true;
+                // Check if extension is also logged in (URL matches)
+                if ($headerValue == $host) {
+                    $valid_url = true;
+                }
             }
         }
 

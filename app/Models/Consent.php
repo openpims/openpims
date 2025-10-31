@@ -12,6 +12,12 @@ class Consent extends Model
     protected $fillable = [
         'user_id',
         'cookie_id',
-        'checked',
+        'consent_status', // Was: checked (1=accepted, 0=rejected, null=not_set)
+        'consented_at', // GDPR Art. 7: Timestamp when user gave/changed consent
+    ];
+
+    protected $casts = [
+        'consent_status' => 'boolean',
+        'consented_at' => 'datetime',
     ];
 }
