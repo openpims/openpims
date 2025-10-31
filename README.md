@@ -19,7 +19,8 @@ The system includes a central infrastructure with browser extensions for Chrome,
     Dec 2021 : TTDSG §26
     Jul 2022 : Draft Bill
     Jun 2023 : Draft Regulation
-    Dec 2023 : ??? Regulation ???
+    May 2024 : TDDDG Passed
+    Nov 2024 : TDDDG In Effect
 ```
 
 ## Category Definition on Operator Side:
