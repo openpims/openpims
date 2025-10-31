@@ -41,7 +41,7 @@ The Vendors array has the following structure
 
 The OpenPIMS browser extensions have been migrated to a modern, unified codebase:
 
-**Repository:** `../extensions/` (WXT Framework, TypeScript)
+**Repository:** [openpims/extensions](https://github.com/openpims/extensions) (WXT Framework, TypeScript)
 
 **Features:**
 - ✅ **One Codebase** for all browsers: Chrome, Brave, Opera, Firefox, Edge, Safari
@@ -52,18 +52,19 @@ The OpenPIMS browser extensions have been migrated to a modern, unified codebase
 
 **Quick Start:**
 ```bash
-cd ../extensions/
+git clone https://github.com/openpims/extensions
+cd extensions
 npm install
 npm run dev        # Development (all browsers)
 npm run build      # Production build
 ```
 
-See `../extensions/README.md` for complete documentation.
+See the [extension documentation](https://github.com/openpims/extensions) for complete details.
 
 **Legacy Extensions (Deprecated):**
-- `../chromium/` - Chrome/Edge/Brave/Opera extension ⚠️ Use unified extension
-- `../firefox/` - Firefox extension ⚠️ Use unified extension
-- `../safari/` - Safari extension ⚠️ Use unified extension
+- [openpims/chromium](https://github.com/openpims/chromium) - Chrome/Edge/Brave/Opera extension ⚠️ Use unified extension
+- [openpims/firefox](https://github.com/openpims/firefox) - Firefox extension ⚠️ Use unified extension
+- [openpims/safari](https://github.com/openpims/safari) - Safari extension ⚠️ Use unified extension
 
 ---
 
