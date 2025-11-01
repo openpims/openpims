@@ -17,9 +17,10 @@ return new class extends Migration
             //$table->string('user');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable()->default(null);
             $table->string('token', 32)->nullable()->default(null);
-            $table->rememberToken();
+            $table->string('stripe_customer_id')->nullable();
+            $table->string('subscription_status')->nullable();
+            $table->string('subscription_id')->nullable();
             $table->timestamps();
         });
     }

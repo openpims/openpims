@@ -32,7 +32,6 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'email',
-        'password',
         'token',
         'stripe_customer_id',
         'subscription_status',
@@ -45,8 +44,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'token',  // Hide the HMAC token for security
     ];
 
     /**
