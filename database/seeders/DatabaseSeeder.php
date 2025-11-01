@@ -5,7 +5,6 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,15 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create test users for passwordless authentication
         User::create([
-            'email' => env('TEST_EMAIL'),
-            'password' => Hash::make(env('TEST_PASSWORD')),
+            'email' => env('TEST_EMAIL', 'test@example.com'),
             'email_verified_at' => now(),
         ]);
 
         User::create([
-            'email' => env('TEST_EMAIL_EDGE'),
-            'password' => Hash::make(env('TEST_PASSWORD_EDGE')),
+            'email' => env('TEST_EMAIL_EDGE', 'edge@example.com'),
             'email_verified_at' => now(),
         ]);
     }
