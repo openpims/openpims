@@ -100,7 +100,11 @@ Route::group([
     })->name('login');
 
     Route::get('/register', function() {
-        return view('auth.magic-link');
+        // REGISTRATION TEMPORARILY DISABLED
+        abort(503, 'Registration is temporarily closed.');
+
+        // TODO: Re-enable registration by uncommenting the line below and removing the abort() above
+        // return view('auth.magic-link');
     })->name('register');
 
     Route::post('/auth/send-magic-link', [MagicLinkController::class, 'sendMagicLink'])->name('auth.send-magic-link');

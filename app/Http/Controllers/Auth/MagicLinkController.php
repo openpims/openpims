@@ -29,17 +29,21 @@ class MagicLinkController extends Controller
         $url = $request->input('url');
 
         if (!$user) {
-            // Create new user for registration (passwordless)
-            $user = User::create([
-                'email' => $request->email,
-                'password' => null,
-                'email_verified_at' => now(), // Auto-verify via magic link
-            ]);
+            // REGISTRATION TEMPORARILY DISABLED
+            return back()->with('error', 'Die Registrierung ist vorübergehend geschlossen. Bitte versuchen Sie es später erneut.');
 
-            // Send login magic link (no password setup needed)
-            $this->sendLoginMagicLink($user, $url);
-
-            return back()->with('status', 'Willkommen! Ein Login-Link wurde an Ihre E-Mail-Adresse gesendet.');
+            // TODO: Re-enable registration by uncommenting the code below
+            // // Create new user for registration (passwordless)
+            // $user = User::create([
+            //     'email' => $request->email,
+            //     'password' => null,
+            //     'email_verified_at' => now(), // Auto-verify via magic link
+            // ]);
+            //
+            // // Send login magic link (no password setup needed)
+            // $this->sendLoginMagicLink($user, $url);
+            //
+            // return back()->with('status', 'Willkommen! Ein Login-Link wurde an Ihre E-Mail-Adresse gesendet.');
         } else {
             // Send login magic link
             $this->sendLoginMagicLink($user, $url);
