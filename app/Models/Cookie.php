@@ -50,4 +50,12 @@ class Cookie extends Model
         'analytics' => 'Statistik & Analyse',
         'marketing' => 'Marketing & Werbung',
     ];
+
+    /**
+     * Get the site that owns the cookie
+     */
+    public function site()
+    {
+        return $this->belongsTo(Site::class, 'site_id', 'site_id');
+    }
 }

@@ -20,4 +20,12 @@ class Consent extends Model
         'consent_status' => 'boolean',
         'consented_at' => 'datetime',
     ];
+
+    /**
+     * Get the cookie that owns the consent
+     */
+    public function cookie()
+    {
+        return $this->belongsTo(Cookie::class, 'cookie_id', 'cookie_id');
+    }
 }

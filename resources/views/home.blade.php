@@ -772,6 +772,42 @@
 
     @if(true)
         <div class="container">
+            {{-- Export/Import Section --}}
+            <div class="row justify-content-center mb-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-download"></i> Daten-Management
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-download"></i> Consents exportieren</h6>
+                                    <p class="text-muted small">Exportiere alle deine Consent-Einstellungen als JSON-Datei.</p>
+                                    <a href="{{ route('export') }}" class="btn btn-primary">
+                                        <i class="bi bi-download"></i> Export starten
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-upload"></i> Consents importieren</h6>
+                                    <p class="text-muted small">Importiere eine zuvor exportierte JSON-Datei.</p>
+                                    <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data" id="importForm">
+                                        @csrf
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" name="import_file" id="importFile" accept=".json,.txt" required>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="bi bi-upload"></i> Import starten
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">Max. 10 MB, nur JSON-Dateien</small>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row justify-content-center">
                 <div class="col-md-12">
                     <div class="card">

@@ -120,6 +120,7 @@ Route::group([
     Route::get('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth']);
     Route::post('/setup', [SetupController::class, 'index'])->name('setup')->middleware(['auth']);
     Route::get('/export', [HomeController::class, 'export'])->name('export')->middleware(['auth']);
+    Route::post('/import', [HomeController::class, 'import'])->name('import')->middleware(['auth']);
     Route::get('/visit/{siteId}', [HomeController::class, 'visit'])->name('visit')->middleware(['auth']);
     Route::post('/consent/save', [HomeController::class, 'saveConsent'])->name('saveConsent')->middleware(['auth']);
     Route::post('/consent/category/save', [HomeController::class, 'saveCategoryConsent'])->name('saveCategoryConsent')->middleware(['auth']);

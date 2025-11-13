@@ -402,40 +402,217 @@ class HomeController extends Controller
 
     public function export(Request $request)
     {
-        $fileName = 'openpims.csv';
+        $userId = Auth::user()->user_id;
+        $fileName = 'openpims-consents-' . date('Y-m-d') . '.json';
 
-        $sql = "SELECT DISTINCT sites.site
-            FROM consents
-            JOIN cookies USING (cookie_id)
-            JOIN sites USING (site_id)
-            WHERE consents.consent_status = 1
-            AND consents.user_id = " . Auth::user()->user_id;
-        $consents = DB::select($sql);
+        // Export all consent data in JSON format (3-Tier structure)
+        $exportData = [
+            'version' => '2.0',
+            'export_date' => date('Y-m-d H:i:s'),
+            'user_id' => $userId,
+            'consents' => [
+                // Tier 1: Category-level consents
+                'categories' => ConsentCategory::where('user_id', $userId)
+                    ->with('site:site_id,site,url')
+                    ->get()
+                    ->map(function($consent) {
+                        return [
+                            'site' => $consent->site->site,
+                            'site_url' => $consent->site->url,
+                            'category' => $consent->category,
+                            'consent_status' => $consent->consent_status,
+                        ];
+                    }),
 
-        $headers = array(
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        );
+                // Tier 2: Provider-level consents
+                'providers' => ConsentProvider::where('user_id', $userId)
+                    ->with('site:site_id,site,url')
+                    ->get()
+                    ->map(function($consent) {
+                        return [
+                            'site' => $consent->site->site,
+                            'site_url' => $consent->site->url,
+                            'category' => $consent->category,
+                            'provider' => $consent->provider,
+                            'consent_status' => $consent->consent_status,
+                        ];
+                    }),
 
-        $columns = array('Site');
+                // Tier 3: Cookie-level consents
+                'cookies' => Consent::where('user_id', $userId)
+                    ->with(['cookie' => function($query) {
+                        $query->with('site:site_id,site,url');
+                    }])
+                    ->get()
+                    ->map(function($consent) {
+                        return [
+                            'site' => $consent->cookie->site->site,
+                            'site_url' => $consent->cookie->site->url,
+                            'cookie_name' => $consent->cookie->cookie,
+                            'category' => $consent->cookie->category,
+                            'providers' => $consent->cookie->providers,
+                            'consent_status' => $consent->consent_status,
+                        ];
+                    }),
+            ]
+        ];
 
-        $callback = function() use ($consents, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
 
-            foreach ($consents as $consent) {
-                $row['Site']  = $consent->site;
+        return response()->json($exportData, 200, $headers);
+    }
 
-                fputcsv($file, array($row['Site']));
+    /**
+     * Import consents from JSON file
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'import_file' => 'required|file|mimes:json,txt|max:10240' // Max 10MB
+        ]);
+
+        try {
+            $file = $request->file('import_file');
+            $jsonContent = file_get_contents($file->getRealPath());
+            $data = json_decode($jsonContent, true);
+
+            if (!$data || !isset($data['version']) || !isset($data['consents'])) {
+                return back()->with('error', 'Ungültiges Dateiformat. Bitte verwenden Sie eine exportierte OpenPIMS-Datei.');
             }
 
-            fclose($file);
-        };
+            $userId = Auth::user()->user_id;
+            $imported = [
+                'categories' => 0,
+                'providers' => 0,
+                'cookies' => 0,
+                'sites_created' => 0
+            ];
 
-        return response()->stream($callback, 200, $headers);
+            DB::beginTransaction();
+
+            try {
+                // Import Tier 1: Category consents
+                if (isset($data['consents']['categories'])) {
+                    foreach ($data['consents']['categories'] as $item) {
+                        // Find or create site
+                        $site = Site::firstOrCreate(
+                            ['url' => $item['site_url']],
+                            ['site' => $item['site']]
+                        );
+
+                        if ($site->wasRecentlyCreated) {
+                            $imported['sites_created']++;
+                        }
+
+                        // Create or update consent
+                        ConsentCategory::updateOrCreate(
+                            [
+                                'user_id' => $userId,
+                                'site_id' => $site->site_id,
+                                'category' => $item['category']
+                            ],
+                            ['consent_status' => $item['consent_status']]
+                        );
+
+                        $imported['categories']++;
+                    }
+                }
+
+                // Import Tier 2: Provider consents
+                if (isset($data['consents']['providers'])) {
+                    foreach ($data['consents']['providers'] as $item) {
+                        $site = Site::firstOrCreate(
+                            ['url' => $item['site_url']],
+                            ['site' => $item['site']]
+                        );
+
+                        if ($site->wasRecentlyCreated) {
+                            $imported['sites_created']++;
+                        }
+
+                        ConsentProvider::updateOrCreate(
+                            [
+                                'user_id' => $userId,
+                                'site_id' => $site->site_id,
+                                'category' => $item['category'],
+                                'provider' => $item['provider']
+                            ],
+                            ['consent_status' => $item['consent_status']]
+                        );
+
+                        $imported['providers']++;
+                    }
+                }
+
+                // Import Tier 3: Cookie consents
+                if (isset($data['consents']['cookies'])) {
+                    foreach ($data['consents']['cookies'] as $item) {
+                        $site = Site::firstOrCreate(
+                            ['url' => $item['site_url']],
+                            ['site' => $item['site']]
+                        );
+
+                        if ($site->wasRecentlyCreated) {
+                            $imported['sites_created']++;
+                        }
+
+                        // Find or create cookie
+                        $cookie = Cookie::firstOrCreate(
+                            [
+                                'site_id' => $site->site_id,
+                                'cookie' => $item['cookie_name']
+                            ],
+                            [
+                                'category' => $item['category'] ?? 'functional',
+                                'providers' => $item['providers'] ?? null,
+                                'necessary' => false
+                            ]
+                        );
+
+                        // Create or update consent
+                        Consent::updateOrCreate(
+                            [
+                                'user_id' => $userId,
+                                'cookie_id' => $cookie->cookie_id
+                            ],
+                            ['consent_status' => $item['consent_status']]
+                        );
+
+                        $imported['cookies']++;
+                    }
+                }
+
+                DB::commit();
+
+                $message = sprintf(
+                    'Import erfolgreich: %d Kategorien, %d Provider, %d Cookies importiert.',
+                    $imported['categories'],
+                    $imported['providers'],
+                    $imported['cookies']
+                );
+
+                if ($imported['sites_created'] > 0) {
+                    $message .= sprintf(' %d neue Sites erstellt.', $imported['sites_created']);
+                }
+
+                return back()->with('status', $message);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Consent import failed: ' . $e->getMessage());
+                return back()->with('error', 'Import fehlgeschlagen: ' . $e->getMessage());
+            }
+
+        } catch (\Exception $e) {
+            Log::error('File reading failed: ' . $e->getMessage());
+            return back()->with('error', 'Datei konnte nicht gelesen werden: ' . $e->getMessage());
+        }
     }
 
 
