@@ -772,42 +772,6 @@
 
     @if(true)
         <div class="container">
-            {{-- Export/Import Section --}}
-            <div class="row justify-content-center mb-3">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-download"></i> Daten-Management
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6><i class="bi bi-download"></i> Consents exportieren</h6>
-                                    <p class="text-muted small">Exportiere alle deine Consent-Einstellungen als JSON-Datei.</p>
-                                    <a href="{{ route('export') }}" class="btn btn-primary">
-                                        <i class="bi bi-download"></i> Export starten
-                                    </a>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6><i class="bi bi-upload"></i> Consents importieren</h6>
-                                    <p class="text-muted small">Importiere eine zuvor exportierte JSON-Datei.</p>
-                                    <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data" id="importForm">
-                                        @csrf
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" name="import_file" id="importFile" accept=".json,.txt" required>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="bi bi-upload"></i> Import starten
-                                            </button>
-                                        </div>
-                                        <small class="text-muted">Max. 10 MB, nur JSON-Dateien</small>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="row justify-content-center">
                 <div class="col-md-12">
                     <div class="card">
@@ -1317,4 +1281,69 @@
         });
     });
 </script>
+
+{{-- Export/Import Modal --}}
+<div class="modal fade" id="exportImportModal" tabindex="-1" aria-labelledby="exportImportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportImportModalLabel">
+                    <i class="bi bi-arrow-down-up"></i> Daten Export/Import
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-download"></i> Export
+                                </h5>
+                                <p class="card-text text-muted">
+                                    Exportiere alle deine Consent-Einstellungen als JSON-Datei. Diese Datei enthält alle deine Cookie-, Provider- und Kategorie-Präferenzen.
+                                </p>
+                                <ul class="small text-muted mb-3">
+                                    <li>Alle 3 Consent-Tier (Kategorien, Provider, Cookies)</li>
+                                    <li>Inkl. Site-Informationen</li>
+                                    <li>JSON-Format für einfache Wiederherstellung</li>
+                                </ul>
+                                <a href="{{ route('export') }}" class="btn btn-primary">
+                                    <i class="bi bi-download"></i> Jetzt exportieren
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-upload"></i> Import
+                                </h5>
+                                <p class="card-text text-muted">
+                                    Importiere eine zuvor exportierte JSON-Datei. Bestehende Einstellungen werden aktualisiert, neue Sites werden automatisch erstellt.
+                                </p>
+                                <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data" id="importForm">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label for="importFile" class="form-label small">Datei auswählen</label>
+                                        <input type="file" class="form-control" name="import_file" id="importFile" accept=".json,.txt" required>
+                                        <div class="form-text">Max. 10 MB, nur JSON-Dateien</div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-upload"></i> Jetzt importieren
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

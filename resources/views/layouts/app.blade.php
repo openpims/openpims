@@ -66,13 +66,11 @@
                                 <a class="nav-link" href="/">Home</a>
                             </li>
 
-                            <!--li class="nav-item">
-                                <a class="nav-link" href="/export">Export</a>
-                            </li-->
-
-                            <!--li class="nav-item">
-                                <a class="nav-link" href="/setup">Setup</a>
-                            </li-->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exportImportModal">
+                                    <i class="bi bi-arrow-down-up"></i> Export/Import
+                                </a>
+                            </li>
 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
