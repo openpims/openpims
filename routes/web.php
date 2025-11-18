@@ -94,6 +94,15 @@ Route::group([
         $controller = new HomeController();
         return $controller->save($request);
     })->name('save');
+    // Legal pages
+    Route::get('/datenschutz', function() {
+        return view('legal.privacy');
+    })->name('privacy');
+
+    Route::get('/impressum', function() {
+        return view('legal.imprint');
+    })->name('imprint');
+
     // Passwordless authentication - Magic Link only
     Route::get('/login', function() {
         return view('auth.magic-link');
@@ -125,6 +134,11 @@ Route::group([
     Route::get('/get-site-cookies/{siteId}', [HomeController::class, 'getSiteCookies'])->name('getSiteCookies')->middleware(['auth']);
     Route::post('/edit-consent', [HomeController::class, 'editConsent'])->name('editConsent')->middleware(['auth']);
     Route::get('/user', [UserController::class, 'index'])->name('user')->middleware(['auth']);
+
+    // User Settings & GDPR
+    Route::get('/settings', [UserController::class, 'settings'])->name('user.settings')->middleware(['auth']);
+    Route::get('/data-request', [UserController::class, 'dataRequest'])->name('user.data-request')->middleware(['auth']);
+    Route::delete('/account', [UserController::class, 'destroy'])->name('user.destroy')->middleware(['auth']);
 
     // Extension Setup API
     Route::get('/api/extension/setup', function(Request $request) {

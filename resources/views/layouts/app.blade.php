@@ -78,10 +78,14 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('user.settings') }}">
+                                        <i class="bi bi-gear"></i> {{ __('Einstellungen') }}
+                                    </a>
+                                    <hr class="dropdown-divider">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                        <i class="bi bi-box-arrow-right"></i> {{ __('Logout') }}
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -98,6 +102,15 @@
         <main class="py-4">
             @yield('content')
         </main>
+
+        <footer class="footer mt-auto py-3 bg-light">
+            <div class="container text-center">
+                <span class="text-muted">
+                    <a href="{{ route('imprint') }}" class="text-muted me-3">Impressum</a>
+                    <a href="{{ route('privacy') }}" class="text-muted">Datenschutz</a>
+                </span>
+            </div>
+        </footer>
     </div>
 
     <script src="{{ mix('/jquery.min.js') }}"></script>
