@@ -29,6 +29,11 @@ class MagicLinkController extends Controller
         $url = $request->input('url');
 
         if (!$user) {
+            // Check if registration is enabled
+            if (!config('app.registration_enabled')) {
+                return back()->with('error', 'Die Registrierung ist derzeit deaktiviert. Bitte kontaktieren Sie den Administrator.');
+            }
+
             // Create new user for registration (passwordless)
             $user = User::create([
                 'email' => $request->email,

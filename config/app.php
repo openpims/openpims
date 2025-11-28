@@ -212,4 +212,16 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Registration Settings
+    |--------------------------------------------------------------------------
+    |
+    | This option controls whether new user registration is allowed.
+    | When disabled, only existing users can log in.
+    |
+    */
+
+    'registration_enabled' => env('REGISTRATION_ENABLED', false),
+
 ];

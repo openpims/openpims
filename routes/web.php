@@ -108,7 +108,11 @@ Route::group([
         return view('auth.magic-link');
     })->name('login');
 
+    // Register route - redirects to login if registration is disabled
     Route::get('/register', function() {
+        if (!config('app.registration_enabled')) {
+            return redirect()->route('login');
+        }
         return view('auth.magic-link');
     })->name('register');
 
